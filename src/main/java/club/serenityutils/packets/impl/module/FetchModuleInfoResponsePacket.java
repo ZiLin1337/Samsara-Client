@@ -1,6 +1,6 @@
 package club.serenityutils.packets.impl.module;
 
-import cc.astralis.protection.util.Base64;
+import cc.samsara.protection.util.Base64;
 import club.serenityutils.modules.ModuleMetaData;
 import club.serenityutils.packets.Packet;
 import club.serenityutils.utils.EncryptionUtil;

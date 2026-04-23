@@ -1,8 +1,8 @@
 package club.serenityutils.packets;
 
-import cc.astralis.Astralis;
-import cc.astralis.protection.Flags;
-import cc.astralis.protection.util.Base64;
+import cc.samsara.Samsara;
+import cc.samsara.protection.Flags;
+import cc.samsara.protection.util.Base64;
 import club.serenityutils.packets.api.IPacket;
 import club.serenityutils.utils.EncryptionUtil;
 import com.google.gson.JsonObject;
@@ -46,7 +46,7 @@ public abstract class Packet implements IPacket {
         try {
             if (!socket.isOpen()) {
                 if (Flags.didDisconnect && !Flags.didReconnect && Flags.reconnectTime.finished(10000)) {
-                    Astralis.LOGGER.error("Network violation 0x08");
+                    Samsara.LOGGER.error("Network violation 0x08");
 
                     // crash
                     try {
@@ -73,7 +73,7 @@ public abstract class Packet implements IPacket {
             socket.send(dataToString());
         } catch (Exception e) {
             if (Flags.didDisconnect && !Flags.didReconnect && Flags.reconnectTime.finished(10000)) {
-                Astralis.LOGGER.error("Network violation 0x08");
+                Samsara.LOGGER.error("Network violation 0x08");
 
                 // crash
                 try {

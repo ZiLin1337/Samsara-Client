@@ -1,6 +1,6 @@
 package club.serenityutils.packets.impl;
 
-import cc.astralis.protection.util.Base64;
+import cc.samsara.protection.util.Base64;
 import club.serenityutils.packets.Packet;
 import club.serenityutils.utils.EncryptionUtil;
 import com.google.gson.JsonObject;

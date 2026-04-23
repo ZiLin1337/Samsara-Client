@@ -1,6 +1,6 @@
 package club.serenityutils.packets.impl.cloud;
 
-import cc.astralis.protection.util.Base64;
+import cc.samsara.protection.util.Base64;
 import club.serenityutils.cloudconfigs.CloudConfig;
 import club.serenityutils.cloudconfigs.api.ICloudConfig;
 import club.serenityutils.packets.Packet;

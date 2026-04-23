@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ClientProfileType {
-    ASTRALIS;
+    SAMSARA;
 
     private final String name;
 

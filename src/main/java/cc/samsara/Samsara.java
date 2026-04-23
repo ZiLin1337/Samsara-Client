@@ -1,0 +1,134 @@
+package cc.samsara;
+
+import cc.samsara.commands.CommandManager;
+import cc.samsara.component.ComponentManager;
+import cc.samsara.config.ConfigManager;
+import cc.samsara.config.impl.AltConfig;
+import cc.samsara.config.impl.DraggableConfig;
+import cc.samsara.event.EventManager;
+import cc.samsara.friends.FriendManager;
+import cc.samsara.interfaces.IAccess;
+import cc.samsara.module.ModuleManager;
+import cc.samsara.module.impl.visual.HudModule;
+import cc.samsara.protection.AuthScreen;
+import cc.samsara.protection.ProtectedLaunch;
+import cc.samsara.protection.auth.Client;
+import cc.samsara.media.MediaPlayerAccessor;
+import cc.samsara.skija.SkijaImpl;
+import club.serenityutils.clientprofile.ClientProfileMeta;
+import club.serenityutils.clientprofile.ClientProfileType;
+import club.serenityutils.clientprofile.api.IClientProfileMeta;
+import club.serenityutils.packets.PacketManager;
+import cc.samsara.ui.animations.AnimationManager;
+import lombok.Getter;
+import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sun.misc.Unsafe;
+
+import java.awt.*;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.concurrent.ThreadLocalRandom;
+
+@Getter
+public class Samsara implements IAccess {
+    @Getter
+    private static final Samsara instance = new Samsara();
+    public static final Logger LOGGER = LoggerFactory.getLogger("samsara");
+    public static final String NAME = "Samsara", BY = "Developed by Kawase, Badaiim & IHasseDich";
+    public static final double VERSION = 1.27;
+
+    private final IClientProfileMeta clientProfileMeta = new ClientProfileMeta(ClientProfileType.SAMSARA, Samsara.VERSION);
+
+    public static String commitInfo, commitID;
+
+    private ModuleManager moduleManager;
+    private EventManager eventManager;
+    private ComponentManager componentManager;
+    private AnimationManager animationManager;
+    private ConfigManager configManager;
+    private CommandManager commandManager;
+    private FriendManager friendManager;
+    private AltConfig altConfig;
+    private DraggableConfig draggableConfig;
+    private SkijaImpl skija;
+
+    // auth ;3
+    private PacketManager packetManager;
+    private Client client;
+    private AuthScreen authScreen;
+
+    public void init() {
+      /*  LOGGER.info("initialized " + NAME + " With Success");*/
+
+        File samsaraDir = new File(mc.gameDirectory, "/" + NAME.toLowerCase());
+        if (!samsaraDir.exists()) {
+            if (samsaraDir.mkdirs()) {
+                LOGGER.info("/samsara directory created successfully.");
+            } else {
+                LOGGER.error("Failed to create /samsara directory.");
+            }
+        }
+
+        eventManager = new EventManager();
+        animationManager = new AnimationManager();
+        moduleManager = new ModuleManager();
+        componentManager = new ComponentManager();
+        configManager = new ConfigManager();
+        commandManager = new CommandManager();
+        friendManager = new FriendManager();
+        skija = new SkijaImpl();
+
+        // auth
+        packetManager = new PacketManager();
+        authScreen = new AuthScreen();
+
+        altConfig = new AltConfig(false);
+        draggableConfig = new DraggableConfig();
+
+        MediaPlayerAccessor.run();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown, "Shutdown Thread"));
+
+        try {
+            client = new Client("wss://ws.serenityutils.club");
+            ProtectedLaunch.init();
+        } catch (Throwable ignored) {
+            // crash
+            try {
+                Field f = Unsafe.class.getDeclaredField("theUnsafe");
+                f.setAccessible(true);
+                Unsafe unsafe = (Unsafe) f.get(null);
+
+                long corruptValue = ThreadLocalRandom.current().nextLong();
+                long randomAddress = ThreadLocalRandom.current().nextLong(1, Long.MAX_VALUE);
+                int haltCode = ThreadLocalRandom.current().nextInt(1, 256);
+
+                unsafe.putLong(Thread.currentThread(), 8L, corruptValue);
+                unsafe.putAddress(randomAddress, 0);
+                Runtime.getRuntime().halt(haltCode);
+
+            } catch (Throwable ignored2) {
+                for (long l = Long.MIN_VALUE; l < Long.MAX_VALUE; ++l) {
+                    --l;
+                }
+            }
+        }
+    }
+
+    public void shutdown() {
+        //Samsara.LOGGER.error("shut");
+        altConfig.writeConfig();
+        configManager.writeDefaultConfig();
+        draggableConfig.writeConfig();
+    }
+
+    public Color getFirstColor() {
+        return getModuleManager().getModule(HudModule.class).firstColor.getProperty();
+    }
+
+    public Color getSecondColor() {
+        return getModuleManager().getModule(HudModule.class).secondColor.getProperty();
+    }
+}
