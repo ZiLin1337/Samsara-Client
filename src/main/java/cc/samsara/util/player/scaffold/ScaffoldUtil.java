@@ -1,9 +1,9 @@
 package cc.samsara.util.player.scaffold;
 
 import cc.samsara.interfaces.IAccess;
-import cc.samsara.module.impl.movement.ScaffoldWalkModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.AirBlock;
@@ -22,13 +22,59 @@ import java.util.List;
  * @since 26.10.2025
  */
 public class ScaffoldUtil implements IAccess {
+    public record BlockSlot(int slot, InteractionHand hand) { /* w */ }
+
+    public static BlockSlot[] getBlockSlots(boolean ignoreOffhand) {
+        List<BlockSlot> blockSlots = new ArrayList<>();
+
+        if (!ignoreOffhand) {
+            ItemStack offhandStack = mc.player.getInventory().getItem(40);
+            if (offhandStack.getItem() instanceof BlockItem blockItem) {
+                Block block = blockItem.getBlock();
+                if (canPlaceBlock(block)) {
+                    blockSlots.add(new BlockSlot(0, InteractionHand.OFF_HAND));
+                }
+            }
+        }
+
+        for (int i = 0; i < 9; i++) {
+            ItemStack itemStack = mc.player.getInventory().getNonEquipmentItems().get(i);
+            if (itemStack.getItem() instanceof BlockItem blockItem && itemStack.getCount() > 0) {
+                Block block = blockItem.getBlock();
+                if (canPlaceBlock(block)) {
+                    blockSlots.add(new BlockSlot(i, InteractionHand.MAIN_HAND));
+                }
+            }
+        }
+
+        return blockSlots.toArray(new BlockSlot[0]);
+    }
+
+    public static int getStackCount(BlockSlot slot) {
+        if (slot.hand() == InteractionHand.OFF_HAND) {
+            return mc.player.getInventory().getItem(40).getCount();
+        } else {
+            return mc.player.getInventory().getNonEquipmentItems().get(slot.slot()).getCount();
+        }
+    }
+
+    public static BlockSlot getBlockSlot(boolean ignore) {
+        BlockSlot[] slots = getBlockSlots(ignore);
+        return slots.length > 0 ? slots[0] : new BlockSlot(-1, InteractionHand.MAIN_HAND);
+    }
+
+    public static BlockState getBlockStateRelativeToPlayer(final double offsetX, final double offsetY, final double offsetZ) {
+        BlockPos playerPos = mc.player.blockPosition();
+        return mc.level.getBlockState(playerPos.offset((int) offsetX, (int) offsetY, (int) offsetZ));
+    }
+
     public static int getTotalBlocksInInventory() {
         int total = 0;
         for (int i = 0; i < mc.player.getInventory().getContainerSize(); i++) {
             ItemStack stack = mc.player.getInventory().getItem(i);
             if (stack.getItem() instanceof BlockItem blockItem) {
                 Block block = blockItem.getBlock();
-                if (ScaffoldWalkUtil.canPlaceBlock(block)) {
+                if (canPlaceBlock(block)) {
                     total += stack.getCount();
                 }
             }

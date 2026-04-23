@@ -6,7 +6,7 @@ import cc.samsara.event.events.impl.game.UpdateEvent;
 import samsara.mixin.accessor.entity.LivingEntityAccessor;
 import cc.samsara.module.Category;
 import cc.samsara.module.Module;
-import cc.samsara.module.impl.movement.ScaffoldRecodeModule;
+import cc.samsara.module.impl.movement.ScaffoldModule;
 import cc.samsara.property.properties.BooleanProperty;
 import cc.samsara.property.properties.NumberProperty;
 
@@ -25,7 +25,7 @@ public class NoJumpDelayModule extends Module {
             return;
         }
 
-        if (notWhileScaffold.getProperty() && (Samsara.getInstance().getModuleManager().getModule(ScaffoldRecodeModule.class).isToggled())) {
+        if (notWhileScaffold.getProperty() && (Samsara.getInstance().getModuleManager().getModule(ScaffoldModule.class).isToggled())) {
             return;
         }
         ((LivingEntityAccessor) mc.player).setNoJumpDelay(delay.getProperty().intValue());

@@ -9,28 +9,32 @@ import cc.samsara.event.events.impl.game.UpdateEvent;
 import cc.samsara.event.events.impl.input.InputTickEvent;
 import cc.samsara.event.events.impl.render.Render2DEvent;
 import cc.samsara.event.events.impl.render.Render3DEvent;
+import cc.samsara.event.events.impl.render.ShaderEvent;
 import cc.samsara.event.types.EventModes;
+import cc.samsara.font.FontManager;
 import cc.samsara.module.Category;
 import cc.samsara.module.Module;
-import cc.samsara.module.impl.movement.scaffold.sprints.*;
+import cc.samsara.module.impl.movement.scaffold.sprints.IntaveSprint;
+import cc.samsara.module.impl.movement.scaffold.sprints.ModernWatchdogSprint;
+import cc.samsara.module.impl.movement.scaffold.sprints.VanillaSprint;
 import cc.samsara.module.impl.movement.scaffold.towers.VanillaTower;
 import cc.samsara.module.impl.movement.scaffold.towers.WatchdogVanillaTower;
-import cc.samsara.property.properties.BooleanProperty;
-import cc.samsara.property.properties.ClassModeProperty;
-import cc.samsara.property.properties.ModeProperty;
-import cc.samsara.property.properties.NumberProperty;
+import cc.samsara.module.impl.visual.HudModule;
+import cc.samsara.property.properties.*;
+import cc.samsara.skija.utils.SkijaUtil;
 import cc.samsara.util.math.RandomUtil;
 import cc.samsara.util.math.TimeUtil;
 import cc.samsara.util.network.PacketUtil;
 import cc.samsara.util.player.MoveUtil;
 import cc.samsara.util.player.RayTraceUtil;
-import cc.samsara.util.player.scaffold.ScaffoldWalkUtil;
-import cc.samsara.util.player.scaffold.ScaffoldWalkUtil.BlockSlot;
+import cc.samsara.util.player.RotationUtil;
+import cc.samsara.util.player.scaffold.BlockCache;
+import cc.samsara.util.player.scaffold.ScaffoldUtil;
+import cc.samsara.util.player.scaffold.ScaffoldUtil.BlockSlot;
 import cc.samsara.util.render.ChatUtil;
 import cc.samsara.util.render.ColorUtil;
 import cc.samsara.util.render.Render3DUtil;
 import com.mojang.blaze3d.platform.Window;
-import cc.samsara.skija.utils.SkijaUtil;
 import net.minecraft.client.Options;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -42,7 +46,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
@@ -54,12 +57,19 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
 import java.awt.*;
 import java.util.Arrays;
 
-import static cc.samsara.util.player.scaffold.ScaffoldWalkUtil.*;
+import static cc.samsara.util.player.RotationUtil.wrapTo90;
+import static cc.samsara.util.player.scaffold.ScaffoldUtil.getBlockStateRelativeToPlayer;
 
-public class ScaffoldWalkModule extends Module {
+public class ScaffoldModule extends Module {
+
+    public enum RotationMode {
+        BASIC, EDGE, MODERN_WATCHDOG, GOD_BRIDGE, INTAVE, SNAP, BRUTE_FORCE, OFF
+    }
+
     private final ModeProperty scaffoldMode = new ModeProperty("Scaffold Mode", "Normal", "Normal", "Modern Watchdog", "Telly", "Snap"),
             placeMode = new ModeProperty("Place Mode", "Update", "Update", "Click");
     private final NumberProperty offGroundTicksPlace = new NumberProperty("Start Placing After", 5, 0, 9, 1);
@@ -67,6 +77,7 @@ public class ScaffoldWalkModule extends Module {
     private final BooleanProperty alternatedScaffoldOrder = new BooleanProperty("Alternated Scaffold Order", false);
     public final BooleanProperty safeWalk = new BooleanProperty("SafeWalk", true);
     private final BooleanProperty sameY = new BooleanProperty("Same Y", false),
+            keepY = new BooleanProperty("Keep Y", false),
             analBoob = new BooleanProperty("Anal Boob", false);
     private final BooleanProperty dontPlaceInSameTick = new BooleanProperty("Don't place in same tick", true);
     private final BooleanProperty jump = new BooleanProperty("Jump", false);
@@ -80,8 +91,6 @@ public class ScaffoldWalkModule extends Module {
             "Sprint Mode",
             new VanillaSprint(this),
             new ModernWatchdogSprint(this),
-            /*new WatchdogSprint(this),
-            new WatchdogSafeSprint(this),*/
             new IntaveSprint(this)
     );
     public final BooleanProperty tower = new BooleanProperty("Tower", false);
@@ -94,12 +103,13 @@ public class ScaffoldWalkModule extends Module {
     private final ModeProperty blockCounterMode = new ModeProperty("Block Counter Mode", "Samsara", "Samsara", "Adjust");
     private final BooleanProperty blockESP = new BooleanProperty("Block ESP", true);
     private final ModeProperty blockESPMode = new ModeProperty("Block ESP Mode", "Accurate", "Accurate", "Prediction");
+    private final NumberProperty blockESPAlpha = new NumberProperty("Block ESP Alpha", 50, 1, 255, 1);
     private final BooleanProperty sneak = new BooleanProperty("Sneak", false);
     private final NumberProperty sneakEvery = new NumberProperty("Sneak Every", 1, 1, 30, 1);
     private final BooleanProperty funnySlotSwitch = new BooleanProperty("Autoswap to next stack", true);
     private final BooleanProperty rotation = new BooleanProperty("Rotations", true);
-    private final BooleanProperty oneEightyOnJumpKey = new BooleanProperty("180 on jump key", false);
-    private final ModeProperty rayCastMode = new ModeProperty("Ray Cast Mode", "Off", "Off", "Normal", "Advanced", "MC");
+    private final ModeProperty rotationMode = new ModeProperty("Rotation Mode", "Basic", "Basic", "Edge", "Modern Watchdog", "God Bridge", "Intave", "Snap", "Brute Force", "Off");
+    private final ModeProperty rotationSpeedMode = new ModeProperty("Rotation Speed Mode", "Manual", "Manual", "Dynamic");
 
     private final NumberProperty
             minYawSpeed = new NumberProperty("Min Yaw Speed", 120, 1, 180, 1),
@@ -107,16 +117,23 @@ public class ScaffoldWalkModule extends Module {
             minPitchSpeed = new NumberProperty("Min Pitch Speed", 120, 1, 180, 1),
             maxPitchSpeed = new NumberProperty("Max Pitch Speed", 120, 1, 180, 1);
 
-    public final ModeProperty rotationMode = new ModeProperty("Rotation Mode", "Basic", "Basic", "Edge", "Modern Watchdog", "Modern Watchdog 2", "God Bridge", "Intave");
+    private final ModeProperty dynamicRotationSpeed = new ModeProperty("Dynamic Speed Curve", "Fast", "Fast", "Normal", "Slow");
+
+    private final BooleanProperty oneEightyOnJumpKey = new BooleanProperty("180 on jump key", false);
+    private final ModeProperty rayCastMode = new ModeProperty("Ray Cast Mode", "Off", "Off", "Normal", "Advanced", "MC", "Samsara");
+
     private final BooleanProperty bruteForceYaw = new BooleanProperty("Brute Force Yaw", true),
             bruteForcePitch = new BooleanProperty("Brute Force Pitch", true);
     private final BooleanProperty spoofRayCast = new BooleanProperty("Spoof Ray Cast", false),
-                stable = new BooleanProperty("Stable", false);
+            stable = new BooleanProperty("Stable", false);
     private final NumberProperty yawValue = new NumberProperty("Yaw Value", 180, 0, 360, 1),
             pitchValue = new NumberProperty("Pitch Value", 81.7f, -90, 90, 0.1f);
 
-    private BlockData blockData;
-    public int blocksPlaced, ticksOnAir, slot, startSlot;
+    private final BooleanProperty spin = new BooleanProperty("Spin", false);
+    private final NumberProperty spinSpeed = new NumberProperty("Spin Speed", 30f, 0, 100, 1);
+
+    private BlockCache blockCache;
+    public int blocksPlaced, ticksOnAir, startSlot;
     public double startY;
     private float[] rotations;
     public boolean firstJump;
@@ -124,34 +141,36 @@ public class ScaffoldWalkModule extends Module {
     public int spoofedSlot = -1;
     private int lastPlaceTick;
     private int jumpPlaced;
-
-    // tower vars
     private boolean towering;
+    private float currentSpinYaw = 0.0f;
 
-    public ScaffoldWalkModule() {
+    public ScaffoldModule() {
         super(Category.MOVEMENT);
         registerProperties(scaffoldMode, alternatedScaffoldOrder, offGroundTicksPlace.setVisible(() -> scaffoldMode.is("Telly")),
-                placeMode, placeDelay, swing, sameY, changeFov,
+                placeMode, placeDelay, swing, sameY, keepY, changeFov,
                 dontPlaceInSameTick,
-                analBoob.setVisible(sameY::getProperty), jump, dontJumpOnDiag.setVisible(jump::getProperty),
+                analBoob.setVisible(() -> sameY.getProperty() || keepY.getProperty()), jump, dontJumpOnDiag.setVisible(jump::getProperty),
                 jumpEvery.setVisible(jump::getProperty), sprint, sprintOnJump,
                 sprintMode.setVisible(sprint::getProperty), tower,
                 towerMode.setVisible(tower::getProperty),
                 noOffhandCheck, blockCounter, blockCounterMode.setVisible(blockCounter::getProperty),
-                blockESP, blockESPMode.setVisible(blockESP::getProperty),
+                blockESP, blockESPMode.setVisible(blockESP::getProperty), blockESPAlpha.setVisible(blockESP::getProperty),
                 sneak, sneakEvery.setVisible(sneak::getProperty), rayCastMode,
                 funnySlotSwitch, rotation, oneEightyOnJumpKey.setVisible(rotation::getProperty),
                 rotationMode.setVisible(rotation::getProperty),
-                bruteForceYaw.setVisible(() -> !rotationMode.is("Intave")),
-                bruteForcePitch.setVisible(() -> !rotationMode.is("Intave")),
-                spoofRayCast.setVisible(() -> rotationMode.is("Modern Watchdog") && rotation.getProperty()),
-                stable.setVisible(() -> rotationMode.is("Modern Watchdog") && rotation.getProperty()),
-                minYawSpeed.setVisible(rotation::getProperty),
-                maxYawSpeed.setVisible(rotation::getProperty),
-                minPitchSpeed.setVisible(rotation::getProperty),
-                maxPitchSpeed.setVisible(rotation::getProperty),
+                rotationSpeedMode.setVisible(rotation::getProperty),
+                minYawSpeed.setVisible(() -> rotation.getProperty() && rotationSpeedMode.is("Manual")),
+                maxYawSpeed.setVisible(() -> rotation.getProperty() && rotationSpeedMode.is("Manual")),
+                minPitchSpeed.setVisible(() -> rotation.getProperty() && rotationSpeedMode.is("Manual")),
+                maxPitchSpeed.setVisible(() -> rotation.getProperty() && rotationSpeedMode.is("Manual")),
+                dynamicRotationSpeed.setVisible(() -> rotation.getProperty() && rotationSpeedMode.is("Dynamic")),
+                bruteForceYaw.setVisible(() -> rotation.getProperty() && !rotationMode.is("Intave")),
+                bruteForcePitch.setVisible(() -> rotation.getProperty() && !rotationMode.is("Intave")),
+                spoofRayCast.setVisible(() -> rotation.getProperty() && rotationMode.is("Modern Watchdog")),
+                stable.setVisible(() -> rotation.getProperty() && rotationMode.is("Modern Watchdog")),
                 yawValue.setVisible(rotation::getProperty),
                 pitchValue.setVisible(rotation::getProperty),
+                spin, spinSpeed.setVisible(spin::getProperty),
                 safeWalk
         );
     }
@@ -160,11 +179,10 @@ public class ScaffoldWalkModule extends Module {
     public void onEnable() {
         if (mc.player != null) {
             startSlot = mc.player.getInventory().getSelectedSlot();
-            startY = mc.player.getBlockY();
-            didReset = true;
-            slowdownTime.reset();
+            startY = mc.player.getY();
             blocksPlaced = 0;
             didBecomeNotNull = false;
+            firstJump = true;
             if (!sprint.getProperty()) {
                 mc.options.toggleSprint().set(false);
                 mc.player.setSprinting(false);
@@ -179,6 +197,7 @@ public class ScaffoldWalkModule extends Module {
         this.jumpPlaced = 0;
         spoofedSlot = startSlot;
         lastPlaceTick = -1;
+        currentSpinYaw = 0.0f;
 
         super.onEnable();
     }
@@ -192,14 +211,16 @@ public class ScaffoldWalkModule extends Module {
             mc.options.keyUse.setDown(false);
         }
 
-        if (rotation.getProperty() && changeFov.getProperty())  {
+        if (rotation.getProperty() && changeFov.getProperty()) {
             mc.options.fovEffectScale().set(1.0);
         }
         spoofedSlot = -1;
         RotationComponent.setSpoofRotations(false);
-        RotationComponent.setRotations(rotations,
-                RandomUtil.getAdvancedRandom(minYawSpeed.getProperty().floatValue(), maxYawSpeed.getProperty().floatValue()),
-                RandomUtil.getAdvancedRandom(minPitchSpeed.getProperty().floatValue(), maxPitchSpeed.getProperty().floatValue()));
+        
+        float yawSpeed = RandomUtil.getAdvancedRandom(minYawSpeed.getProperty().floatValue(), maxYawSpeed.getProperty().floatValue());
+        float pitchSpeed = RandomUtil.getAdvancedRandom(minPitchSpeed.getProperty().floatValue(), maxPitchSpeed.getProperty().floatValue());
+        
+        RotationComponent.setRotations(rotations, yawSpeed, pitchSpeed);
 
         super.onDisable();
     }
@@ -224,7 +245,7 @@ public class ScaffoldWalkModule extends Module {
 
         if (alternatedScaffoldOrder.getProperty()) {
             // calculate block data
-            blockData = getBlockData((int) (((sameY.getProperty() || Samsara.getInstance().getModuleManager().getModule(SpeedModule.class).isToggled()) && !mc.options.keyJump.isDown()) || firstJump ? startY : mc.player.getBlockY()));
+            blockCache = ScaffoldUtil.getBlockData((int) (((sameY.getProperty() || keepY.getProperty() || Samsara.getInstance().getModuleManager().getModule(SpeedModule.class).isToggled()) && !mc.options.keyJump.isDown()) || firstJump ? startY : mc.player.getY()));
             rotations = calculateRotations();
         }
     }
@@ -246,16 +267,7 @@ public class ScaffoldWalkModule extends Module {
             mc.player.setSprinting(canSprint);
         }
 
-        float randomPitch = RandomUtil.getAdvancedRandom(minPitchSpeed.getProperty().floatValue(), maxPitchSpeed.getProperty().floatValue()),
-                randomYaw = RandomUtil.getAdvancedRandom(minYawSpeed.getProperty().floatValue(), maxYawSpeed.getProperty().floatValue());
-        if (rotation.getProperty()) {
-            RotationComponent.setRotations(rotations,
-                    /*150.000f,
-                    160.000f*/
-                    rotationMode.is("Modern Watchdog") ? (offGroundTicks < (MoveUtil.isGoingDiagonally() ? 1 : 2) ? 180 : MoveUtil.isGoingDiagonally() ? 60 : 0) : randomYaw,
-                    randomPitch
-            );
-        }
+        rotate();
 
         if (placeMode.is("Update")) {
             place();
@@ -271,16 +283,7 @@ public class ScaffoldWalkModule extends Module {
         }
 
         if (!wasPressedTime.finished(200))
-            startY = mc.player.getBlockY();
-
-        if (sameY.getProperty() && analBoob.getProperty() && sprint.getProperty()) {
-            if (mc.player.onGround()) {
-                //  MoveUtil.strafe(Math.min(0.45f, MoveUtil.getSpeed() * 2) - Math.random() / 100f);
-            }
-            ChatUtil.printDebug(event.getYaw() + " expected: " + (mc.player.getYRot() - 110));
-            mc.player.setSprinting(Math.abs(mc.player.getYRot() - 110 - event.getYaw()) <= 30f && MoveUtil.isMoving());
-
-        }
+            startY = mc.player.getY();
 
         if (firstJump && offGroundTicks == 8) {
             firstJump = false;
@@ -302,15 +305,17 @@ public class ScaffoldWalkModule extends Module {
         if (!blockESP.getProperty())
             return;
 
-        if (blockData != null) {
-            lastBlockPos = blockData.position();
+        if (blockCache != null) {
+            lastBlockPos = blockCache.blockPos;
         }
+
+        if (lastBlockPos == null) return;
 
         Render3DUtil.drawBoxESP(
                 event.getMatricies(),
                 new AABB(blockESPMode.is("Accurate") ? lastBlockPos :
                         (MoveUtil.isMoving() ? lastBlockPos.relative(mc.player.getMotionDirection()) : lastBlockPos.above())),
-                Samsara.getInstance().getFirstColor(),50
+                Samsara.getInstance().getFirstColor(), blockESPAlpha.getProperty().intValue()
         );
     }
 
@@ -324,7 +329,7 @@ public class ScaffoldWalkModule extends Module {
         float centerX = (float) window.getGuiScaledWidth() / 2;
         float centerY = (float) window.getGuiScaledHeight() / 2 + 5;
 
-        String placedStr = String.valueOf(getTotalBlocksInInventory());
+        String placedStr = String.valueOf(ScaffoldUtil.getTotalBlocksInInventory());
 
         switch (blockCounterMode.getProperty()) {
             case "Adjust" -> {
@@ -349,12 +354,12 @@ public class ScaffoldWalkModule extends Module {
             }
 
             case "Samsara" -> {
-                float textWidth = product_regular_8.getStringWidth("Blocks"),
-                        placedWidth = product_bold_8.getStringWidth(placedStr);
+                float textWidth = FontManager.getFont("tenacity", 8).getStringWidth("Blocks"),
+                        placedWidth = FontManager.getFont("tenacity-bold", 8).getStringWidth(placedStr);
                 float totalWidth = placedWidth + 2.0f + textWidth;
 
                 float drawX = centerX - totalWidth / 2.0f;
-                float textY = centerY + 4;
+                float textY = centerY + 2.5f;
 
                 SkijaUtil.roundedRectangle(
                         drawX - 3f,
@@ -362,17 +367,17 @@ public class ScaffoldWalkModule extends Module {
                         totalWidth + 3f * 2,
                         15,
                         3,
-                        ColorUtil.withAlpha(Color.black, 150)
+                        new Color(15, 15, 18, Samsara.getInstance().getModuleManager().getModule(HudModule.class).backgroundAlpha.getProperty().intValue())
                 );
 
-                product_bold_8.drawStringWithShadow(
+                FontManager.getFont("tenacity-bold", 8).drawStringWithShadow(
                         placedStr,
                         drawX,
                         textY,
                         Samsara.getInstance().getFirstColor()
                 );
 
-                product_regular_8.drawStringWithShadow("Blocks",
+                FontManager.getFont("tenacity", 8).drawStringWithShadow("Blocks",
                         drawX + placedWidth + 2.0f,
                         textY,
                         Color.white
@@ -381,15 +386,38 @@ public class ScaffoldWalkModule extends Module {
         }
     }
 
+    @EventTarget
+    public void onShader(ShaderEvent event) {
+        if (!blockCounter.getProperty())
+            return;
+
+        Window window = mc.getWindow();
+
+        if (blockCounterMode.is("Samsara")) {
+            final float textWidth = FontManager.getFont("tenacity", 8).getStringWidth("Blocks"),
+                    placedWidth = FontManager.getFont("tenacity-bold", 8).getStringWidth(String.valueOf(ScaffoldUtil.getTotalBlocksInInventory()));
+
+            final float totalWidth = placedWidth + 2.0f + textWidth;
+
+            SkijaUtil.drawShaderRoundRectangle(
+                    (((float) window.getGuiScaledWidth() / 2) - totalWidth / 2.0f) - 3f,
+                    (float) window.getGuiScaledHeight() / 2 + 5,
+                    totalWidth + 3f * 2,
+                    15,
+                    3
+            );
+        }
+    }
+
     private void place() {
-        BlockSlot[] slots = getBlockSlots(noOffhandCheck.getProperty());
+        BlockSlot[] slots = ScaffoldUtil.getBlockSlots(noOffhandCheck.getProperty());
         if (slots.length == 0) {
             return;
         }
 
         Arrays.sort(slots, (a, b) -> {
-            int countA = getStackCount(a);
-            int countB = getStackCount(b);
+            int countA = ScaffoldUtil.getStackCount(a);
+            int countB = ScaffoldUtil.getStackCount(b);
             return Integer.compare(countB, countA);
         });
 
@@ -405,15 +433,15 @@ public class ScaffoldWalkModule extends Module {
         ticksOnAir = getBlockStateRelativeToPlayer(0, -1, 0).isAir() ? ++ticksOnAir : 0;
 
         if (!alternatedScaffoldOrder.getProperty())
-            blockData = getBlockData((int) (((sameY.getProperty() || Samsara.getInstance().getModuleManager().getModule(SpeedModule.class).isToggled()) && !mc.options.keyJump.isDown()) || firstJump ? startY : mc.player.getBlockY()));
+            blockCache = ScaffoldUtil.getBlockData((int) (((sameY.getProperty() || keepY.getProperty() || Samsara.getInstance().getModuleManager().getModule(SpeedModule.class).isToggled()) && !mc.options.keyJump.isDown()) || firstJump ? startY : mc.player.getY()));
 
-        if (blockData != null && ticksOnAir > placeDelay.getProperty().intValue()/* && canPlace()*/ &&
+        if (blockCache != null && ticksOnAir > placeDelay.getProperty().intValue() &&
                 (lastPlaceTick != mc.player.tickCount || !dontPlaceInSameTick.getProperty())
         ) {
             if (isRayCastSafe()) {
 
                 mc.gameMode.useItemOn(mc.player, selectedSlot.hand(),
-                        new BlockHitResult(getVec(), blockData.direction(), blockData.position(), false));
+                        new BlockHitResult(ScaffoldUtil.getVec(blockCache), blockCache.direction, blockCache.blockPos, false));
 
                 if (swing.getProperty()) {
                     mc.player.swing(selectedSlot.hand());
@@ -423,9 +451,9 @@ public class ScaffoldWalkModule extends Module {
 
                 if (tower.getProperty() && towerMode.is("Watchdog Vertical") && mc.options.keyJump.isDown()) {
                     mc.gameMode.useItemOn(mc.player, selectedSlot.hand(),
-                            new BlockHitResult(getVec(), blockData.direction(),
-                                    new BlockPos(blockData.position().getX() - 1, blockData.position().getY(),
-                                            blockData.position().getZ()), false));
+                            new BlockHitResult(ScaffoldUtil.getVec(blockCache), blockCache.direction,
+                                    new BlockPos(blockCache.blockPos.getX() - 1, blockCache.blockPos.getY(),
+                                            blockCache.blockPos.getZ()), false));
                 }
 
                 blocksPlaced++;
@@ -436,42 +464,84 @@ public class ScaffoldWalkModule extends Module {
         }
     }
 
-    private float watchdogYawFixRandom;
-    private float watchcockYaw;
+    private void rotate() {
+        if (!rotation.getProperty()) {
+            RotationComponent.setSpoofRotations(false);
+            return;
+        }
 
-    private boolean didReset = false;
-    public final TimeUtil slowdownTime = new TimeUtil();
-    private float[] lastBruteForceRots = null;
-    private int bruteForceTicks = 0;
+        float yawSpeed, pitchSpeed;
 
-    public static float wrapTo90(float f) {
-        f %= 90F;
-        if (f >= 45) f -= 90;
-        if (f < -45) f += 90;
-        return f;
+        if (rotationSpeedMode.is("Dynamic")) {
+            float calculateSpeedFast = mc.player.onGround() ? 180 : offGroundTicks < 2 ? 130 : 40;
+
+            float calculateSpeedNormal = switch (offGroundTicks) {
+                case 0 -> 180;
+                case 1 -> 130;
+                case 3 -> 60;
+                case 6, 7, 8 -> 80;
+                default -> 40;
+            };
+
+            float calculateSpeedSlow = switch (offGroundTicks) {
+                case 0 -> 180;
+                default -> 40;
+            };
+
+            yawSpeed = switch (dynamicRotationSpeed.getProperty()) {
+                case "Fast" -> calculateSpeedFast;
+                case "Normal" -> calculateSpeedNormal;
+                case "Slow" -> calculateSpeedSlow;
+                default -> 40;
+            };
+            pitchSpeed = yawSpeed; // Use same curve for pitch
+        } else {
+            yawSpeed = RandomUtil.getAdvancedRandom(minYawSpeed.getProperty().floatValue(), maxYawSpeed.getProperty().floatValue());
+            pitchSpeed = RandomUtil.getAdvancedRandom(minPitchSpeed.getProperty().floatValue(), maxPitchSpeed.getProperty().floatValue());
+        }
+
+        if (rotationMode.is("Modern Watchdog")) {
+            yawSpeed = (offGroundTicks < (MoveUtil.isGoingDiagonally() ? 1 : 2) ? 180 : MoveUtil.isGoingDiagonally() ? 60 : 0);
+        }
+
+        RotationComponent.setRotations(rotations, yawSpeed, pitchSpeed);
+
+        if (spin.getProperty()) {
+            currentSpinYaw += spinSpeed.getProperty().floatValue();
+            if (currentSpinYaw >= 360f) {
+                currentSpinYaw -= 360f;
+            }
+
+            RotationComponent.setSpoofRotations(true);
+            RotationComponent.setFakeYaw(currentSpinYaw);
+            RotationComponent.setFakePitch(RotationComponent.getPitch());
+        }
     }
 
-    private BlockData lastBlockData;
+    private float watchdogYawFixRandom;
+    private float watchcockYaw;
+    private float[] lastBruteForceRots = null;
+
+    private BlockCache lastBlockCache;
+
     private float[] calculateRotations() {
         float y = mc.player.getYRot() - yawValue.getProperty().floatValue() +
                 (mc.options.keyRight.isDown() ? 45 : mc.options.keyLeft.isDown() ? -45 :
                         mc.options.keyDown.isDown() ? 180 : 0);
 
-        if (blockData != null)
-            lastBlockData = blockData;
+        if (blockCache != null)
+            lastBlockCache = blockCache;
 
         float baseYaw;
         float basePitch = pitchValue.getProperty().floatValue();
 
         if (!MoveUtil.isMoving() && rotationMode.is("Modern Watchdog"))
-            return new float[] {y, basePitch};
+            return new float[]{y, basePitch};
 
         if (rotationMode.is("Modern Watchdog")) {
-      /*      RotationComponent.setSpoofRotations(true);
-            RotationComponent.setFakeYaw(mc.player.isOnGround() ? mc.player.getYaw() : mc.player.getYaw() - 180);
-            RotationComponent.setFakePitch(basePitch);*/
+            if (lastBlockCache == null) return new float[]{y, basePitch};
             boolean leftSide;
-            Vec3 position = new Vec3(lastBlockPos.getX() + 0.5,  lastBlockPos.getY(), lastBlockPos.getZ() + 0.5); // center pos
+            Vec3 position = new Vec3(lastBlockCache.blockPos.getX() + 0.5, lastBlockCache.blockPos.getY(), lastBlockCache.blockPos.getZ() + 0.5); // center pos
 
             double yawRad = MoveUtil.getDirection();
             double dirX = -Math.sin(yawRad);
@@ -482,78 +552,54 @@ public class ScaffoldWalkModule extends Module {
 
             leftSide = (dirX * toEntryZ - dirZ * toEntryX) > 0;
             float straightValue = 260;
-            baseYaw = mc.player.getYRot() + (MoveUtil.isGoingDiagonally() ? -135 : (!leftSide ? straightValue : -straightValue)) /* * Math.signum(f)*/;
-           /* ChatUtil.printDebug(MoveUtil.isGoingDiagonally());*/
+            baseYaw = mc.player.getYRot() + (MoveUtil.isGoingDiagonally() ? -135 : (!leftSide ? straightValue : -straightValue));
         } else {
             baseYaw = mc.player.getYRot() - yawValue.getProperty().floatValue() +
                     (mc.options.keyRight.isDown() ? 45 : mc.options.keyLeft.isDown() ? -45 :
                             mc.options.keyDown.isDown() ? 180 : 0);
         }
 
-   /*     if (rotationMode.is("Watchdog Modern")) {
-            baseYaw = mc.player.getYaw() - (MoveUtil.isGoingDiagonally() ? 180 : 225) +
-                    (mc.options.rightKey.isPressed() ? 45 : mc.options.leftKey.isPressed() ? -45 :
-                            mc.options.backKey.isPressed() ? 180 : 0);
-        }
-*/
         float forwardYaw = mc.player.getYRot() + 45;
 
-        // ChatUtil.print(ticksOnAir);
         if (canPlace()) {
             boolean found = false;
             float finalBruteForceYaw = baseYaw;
             float finalBruteForcePitch = basePitch;
-            if ((bruteForceYaw.getProperty() || bruteForcePitch.getProperty()) && !rotationMode.is("Intave")) {
-                if (blockData != null) {
-                  /*  if (lastBruteForceRots != null && isRayCastSafe()) {
-                        return lastBruteForceRots;
-                    }*/
 
-                    if (bruteForcePitch.getProperty()) {
+            if (rotationMode.is("Brute Force") || ((bruteForceYaw.getProperty() || bruteForcePitch.getProperty()) && !rotationMode.is("Intave"))) {
+                if (blockCache != null) {
+                    if (bruteForcePitch.getProperty() || rotationMode.is("Brute Force")) {
                         for (float possiblePitch = 90; possiblePitch > 30 && !found; possiblePitch -=
-                                (possiblePitch > (mc.player.hasEffect(MobEffects.SPEED) ? 60 : 80) ? 0.5f : 2f)) {
-                            if (RayTraceUtil.getOver(blockData.direction(), blockData.position(), true, 5, baseYaw, possiblePitch)) {
+                                (possiblePitch > (mc.player.hasEffect(net.minecraft.world.effect.MobEffects.SPEED) ? 60 : 80) ? 0.5f : 2f)) {
+                            if (RayTraceUtil.getOver(blockCache.direction, blockCache.blockPos, true, 5, baseYaw, possiblePitch)) {
                                 finalBruteForceYaw = baseYaw;
                                 finalBruteForcePitch = possiblePitch;
                                 found = true;
                                 lastBruteForceRots = new float[]{finalBruteForceYaw, finalBruteForcePitch};
-                                bruteForceTicks = 0;
                             }
                         }
                     }
 
-                    if (bruteForceYaw.getProperty() && !found) {
+                    if ((bruteForceYaw.getProperty() || rotationMode.is("Brute Force")) && !found) {
                         for (float yawOffset = 0; yawOffset <= 180 && !found; yawOffset += 5) {
                             for (float direction = -1; direction <= 1 && !found; direction += 2) {
                                 float possibleYaw = baseYaw + (yawOffset * direction);
                                 for (float possiblePitch = 85; possiblePitch > 30 && !found; possiblePitch -= 5) {
-                                    if (RayTraceUtil.getOver(blockData.direction(), blockData.position(), true, 5, possibleYaw, possiblePitch)) {
+                                    if (RayTraceUtil.getOver(blockCache.direction, blockCache.blockPos, true, 5, possibleYaw, possiblePitch)) {
                                         finalBruteForceYaw = possibleYaw;
                                         finalBruteForcePitch = possiblePitch;
                                         found = true;
                                         lastBruteForceRots = new float[]{finalBruteForceYaw, finalBruteForcePitch};
-                                        bruteForceTicks = 0;
                                     }
                                 }
                             }
                         }
                     }
-
-                } else {
-                   /* if (bruteForceTicks != 0) {
-                        if (scaffoldMode.is("Snap")) {
-                            return new float[]{mc.player.getYaw(), basePitch};
-                        }
-                    }
-                    if (lastBruteForceRots != null) {
-                        bruteForceTicks++;
-                        return lastBruteForceRots;
-                    }*/
                 }
             }
 
-            baseYaw = bruteForceYaw.getProperty() ? finalBruteForceYaw : baseYaw;
-            basePitch = bruteForcePitch.getProperty() ? finalBruteForcePitch : basePitch;
+            baseYaw = (rotationMode.is("Brute Force") || bruteForceYaw.getProperty()) ? finalBruteForceYaw : baseYaw;
+            basePitch = (rotationMode.is("Brute Force") || bruteForcePitch.getProperty()) ? finalBruteForcePitch : basePitch;
 
             switch (rotationMode.getProperty()) {
                 case "Basic" -> {
@@ -561,43 +607,26 @@ public class ScaffoldWalkModule extends Module {
                 }
 
                 case "Modern Watchdog" -> {
-                    if (blockData != null) {
-                        float[] rots = getDirectionToBlock(blockData.position.getX(), blockData.position.getY(), blockData.position.getZ(),
-                                blockData.direction);
+                    if (blockCache != null) {
+                        float[] rots = getDirectionToBlock(blockCache.blockPos.getX(), blockCache.blockPos.getY(), blockCache.blockPos.getZ(),
+                                blockCache.direction);
                         basePitch = rots[1];
                     }
 
-                    return new float[] {baseYaw, basePitch};
+                    return new float[]{baseYaw, basePitch};
                 }
 
-                case "Modern Watchdog 2" -> {
-                    boolean up = mc.options.keyUp.isDown();
-                    boolean left = mc.options.keyLeft.isDown();
-                    float y2 = mc.player.getYRot() - (float) Math.toDegrees(Math.atan2(left == mc.options.keyRight.isDown() ? 0 : left ? 1 : -1, up == mc.options.keyDown.isDown() ? 0 : up ? 1 : -1));
-                    float f = wrapTo90(y2);
-
-                    return new float[] {y2 + (onGroundTicks == 1 ? 0 : (Math.abs(f) > 22.5 ? -140 : 90)) * (f == 0.0F ? 1.0F : Math.signum(f)), basePitch};
-                }
-
-               /* case "Modern Watchdog" -> {
-                    return new float[] { baseYaw + (onGroundTicks == 1 ? 0 : 90), 0, 5};
-                }*/
                 case "Edge" -> {
-                    // badaiim bipass
                     float dirYaw = MoveUtil.getRawDirectionNoKeys();
                     if (oneEightyOnJumpKey.getProperty() && !MoveUtil.isMoving()) {
                         return new float[]{mc.player.getYRot() - 180, basePitch};
                     }
 
-/*
-                    if (((!mc.player.isOnGround() && mc.options.jumpKey.isPressed()) || !MoveUtil.isMoving())
-*/
-
                     if (MoveUtil.isPressingForwardAndStrafe())
                         return new float[]{baseYaw, basePitch};
 
                     if (!didBecomeNotNull) {
-                        if (blockData != null)
+                        if (blockCache != null)
                             didBecomeNotNull = true;
 
                         return new float[]{MoveUtil.isGoingDiagonally() ? dirYaw - 140 + watchdogYawFixRandom : dirYaw + 100 + watchdogYawFixRandom, basePitch};
@@ -607,7 +636,7 @@ public class ScaffoldWalkModule extends Module {
                         }
 
                         boolean leftSide;
-                        Vec3 position = new Vec3(blockData.position.getX() + 0.5, blockData.position.getY(), blockData.position.getZ() + 0.5); // center pos
+                        Vec3 position = new Vec3(blockCache.blockPos.getX() + 0.5, blockCache.blockPos.getY(), blockCache.blockPos.getZ() + 0.5); // center pos
 
                         double yawRad = Math.toRadians(dirYaw);
                         double dirX = -Math.sin(yawRad);
@@ -619,8 +648,8 @@ public class ScaffoldWalkModule extends Module {
                         leftSide = (dirX * toEntryZ - dirZ * toEntryX) > 0;
 
                         if (MoveUtil.isGoingDiagonally()) {
-                            watchcockYaw = dirYaw - 140 /* + watchdogYawFixRandom  */;
-                        } else if (!MoveUtil.isGoingDiagonally()) {
+                            watchcockYaw = dirYaw - 140;
+                        } else {
                             watchcockYaw = dirYaw + (leftSide ? 100 + watchdogYawFixRandom : -100 - watchdogYawFixRandom);
                         }
 
@@ -629,7 +658,6 @@ public class ScaffoldWalkModule extends Module {
                 }
 
                 case "God Bridge" -> {
-                    //return new float[] {mc.thePlayer.rotationYaw - ((MoveUtil.isGoingDiagonally()) ? 180 : 225f), 75.7F};
                     Options options = mc.options;
                     boolean up = options.keyUp.isDown(), down = options.keyDown.isDown(), left = options.keyLeft.isDown(), right = options.keyRight.isDown();
                     float yRot = Mth.wrapDegrees(mc.player.getYRot() - 180 + (up == down ? left == right ? 0 : left ? -90 : 90 : up ? left == right ? 0 : left ? -45 : 45 : left == right ? 180 : left ? -135 : 135));
@@ -650,64 +678,41 @@ public class ScaffoldWalkModule extends Module {
                     }
                     if (yRot >= 22.5F && yRot < 67.5F) yRot = 45;
 
-
                     return new float[]{yRot, 75.7F};
                 }
+
                 case "Intave" -> {
                     if (mc.options.keyJump.isDown())
-                        return getDirectionToBlock(blockData.position.getX(), blockData.position.getY(), blockData.position.getZ(),
-                                blockData.direction);
+                        return getDirectionToBlock(blockCache.blockPos.getX(), blockCache.blockPos.getY(), blockCache.blockPos.getZ(),
+                                blockCache.direction);
 
-                    if (ScaffoldWalkUtil.isAirBlock(mc.player.blockPosition())) {
-                        if (blockData != null) {
-                            float[] rots = getDirectionToBlock(blockData.position.getX(), blockData.position.getY(), blockData.position.getZ(),
-                                    blockData.direction);
-
-                            return rots;
+                    if (ScaffoldUtil.isAirBlock(mc.player.blockPosition())) {
+                        if (blockCache != null) {
+                            return getDirectionToBlock(blockCache.blockPos.getX(), blockCache.blockPos.getY(), blockCache.blockPos.getZ(),
+                                    blockCache.direction);
                         }
                     } else {
-                        return new float[] { forwardYaw, basePitch };
+                        return new float[]{forwardYaw, basePitch};
                     }
-             /*       float targetYaw = baseYaw;
-                    float targetPitch = basePitch;
+                }
 
-                    if (blockData != null) {
-                        // Calculate initial target rotations
-                        float[] rots = getDirectionToBlock(blockData.position(), blockData.direction());
-                        targetYaw = rots[0];
-                        targetPitch = rots[1];
+                case "Snap" -> {
+                    if (mc.options.keyJump.isDown())
+                        return RotationUtil.getDirectionToBlock(blockCache.blockPos, blockCache.direction);
 
-                        // Check if we're already looking at the block
-                        MovingObjectPosition rotationRay = rayCast(1, new float[]{targetYaw, targetPitch},
-                                mc.interactionManager.getReachDistance(), 2);
-
-                        if (!rotationRay.getBlockPos().equals(blockData.position()) ||
-                                rotationRay.getSide() != blockData.direction()) {
-
-                            // If not looking at block, brute force find correct rotation
-                            int maxTicks = (int) (Math.abs(MathHelper.wrapDegrees(targetYaw - watchcockYaw) / 4);
-                            boolean stop = false;
-                            int ticks = 0;
-
-                            while (ticks <= maxTicks && !stop) {
-                                targetYaw = updateRotation(watchcockYaw, rots[0], 5);
-                                targetPitch = getYawBasedPitch(blockData.position(), blockData.direction(),
-                                        targetYaw, basePitch);
-
-                                MovingObjectPosition stopRay = rayCast(1, new float[]{targetYaw, targetPitch},
-                                        mc.interactionManager.getReachDistance(), 2);
-
-                                if (stopRay.getBlockPos().equals(blockData.position()) &&
-                                        stopRay.getSide() == blockData.direction()) {
-                                    stop = true;
-                                }
-                                ticks++;
-                            }
+                    if (ScaffoldUtil.isAirBlock(mc.player.blockPosition())) {
+                        if (blockCache != null) {
+                            return RotationUtil.getDirectionToBlock(blockCache.blockPos, blockCache.direction);
                         }
+                    } else {
+                        return new float[]{mc.player.getYRot(), basePitch};
                     }
-
-                    watchcockYaw = targetYaw;
-                    return new float[]{targetYaw, targetPitch};*/
+                }
+                case "Brute Force" -> {
+                    return new float[]{baseYaw, basePitch};
+                }
+                case "Off" -> {
+                    return new float[]{mc.player.getYRot(), mc.player.getXRot()};
                 }
             }
         } else {
@@ -724,7 +729,6 @@ public class ScaffoldWalkModule extends Module {
         Entity marker = new Entity(EntityType.ITEM, world) {
             @Override
             protected void defineSynchedData(SynchedEntityData.Builder builder) {
-
             }
 
             @Override
@@ -734,20 +738,11 @@ public class ScaffoldWalkModule extends Module {
 
             @Override
             protected void readAdditionalSaveData(ValueInput view) {
-
             }
 
             @Override
             protected void addAdditionalSaveData(ValueOutput view) {
-
             }
-/*
-            @Override
-            protected void initDataTracker() {}
-            @Override
-            protected void readCustomDataFromNbt(NbtCompound nbt) {}
-            @Override
-            protected void writeCustomDataToNbt(NbtCompound nbt) {}*/
         };
 
         marker.setPos(
@@ -784,7 +779,6 @@ public class ScaffoldWalkModule extends Module {
 
     private boolean didJump;
 
-    // I love it when watchdog flags mc.player.jump() :broken_heart:.
     private void jump(InputTickEvent event) {
         if (!jump.getProperty()
                 || !mc.player.onGround()
@@ -795,7 +789,7 @@ public class ScaffoldWalkModule extends Module {
             return;
         }
 
-        final boolean isGodBridgeMode = rotationMode.is("God Bridge") && rotation.getProperty();
+        final boolean isGodBridgeMode = rotationMode.getValue() == RotationMode.GOD_BRIDGE && rotation.getProperty();
         final boolean shouldSkipDiagonal = MoveUtil.isGoingDiagonally() && dontJumpOnDiag.getProperty();
 
         boolean shouldJump;
@@ -806,7 +800,7 @@ public class ScaffoldWalkModule extends Module {
             shouldJump = blocksPlaced != 0 && blocksPlaced % jumpEvery.getProperty().intValue() == 0 || jumpEvery.getProperty().intValue() == 1;
         }
 
-        if (shouldJump && !shouldSkipDiagonal && !didJump ) {
+        if (shouldJump && !shouldSkipDiagonal && !didJump) {
             event.jump = true;
             didJump = true;
 
@@ -826,7 +820,6 @@ public class ScaffoldWalkModule extends Module {
         if (!tower.getProperty() || !mc.options.keyJump.isDown()) {
             if (towering) {
                 MoveUtil.stop();
-
             }
             towering = false;
             return;
@@ -844,26 +837,23 @@ public class ScaffoldWalkModule extends Module {
         };
     }
 
-    // todo: white list from obfuscation.
     private boolean isRayCastSafe() {
-        // modern watchdog for some reason does not have good raycast checks meaning we can sometimes places with yaws
-        // that you shouldn't be able to.
-
-        boolean spoof = rotationMode.is("Modern Watchdog") && spoofRayCast.getProperty();
+        boolean spoof = rotationMode.getValue() == RotationMode.MODERN_WATCHDOG && spoofRayCast.getProperty();
 
         float yaw = spoof ?
                 mc.player.getYRot() - 180 : RotationComponent.getYaw(), pitch = RotationComponent.getPitch();
 
-        if (blockData != null && MoveUtil.isGoingDiagonally() && spoof) {
-            float[] rots = getDirectionToBlock(blockData.position.getX(), blockData.position.getY(), blockData.position.getZ(),
-                    blockData.direction);
+        if (blockCache != null && MoveUtil.isGoingDiagonally() && spoof) {
+            float[] rots = getDirectionToBlock(blockCache.blockPos.getX(), blockCache.blockPos.getY(), blockCache.blockPos.getZ(),
+                    blockCache.direction);
             yaw = rots[0];
         }
 
-        return /*spoof && MoveUtil.isGoingDiagonally() || */switch (rayCastMode.getProperty()) {
-            case "Advanced" -> RayTraceUtil.getOver(blockData.direction(), blockData.position(), true, 5, yaw, pitch);
-            case "Normal" -> RayTraceUtil.getOver(blockData.direction(), blockData.position(), false, 5, yaw, pitch);
+        return switch (rayCastMode.getProperty()) {
+            case "Advanced" -> RayTraceUtil.getOver(blockCache.direction, blockCache.blockPos, true, 5, yaw, pitch);
+            case "Normal" -> RayTraceUtil.getOver(blockCache.direction, blockCache.blockPos, false, 5, yaw, pitch);
             case "MC" -> isMCRayCastSafe();
+            case "Samsara" -> RayTraceUtil.isLookingAtBlock(blockCache.direction, blockCache.blockPos, true, 4.5f, yaw, pitch);
             default -> true;
         };
     }
@@ -871,63 +861,9 @@ public class ScaffoldWalkModule extends Module {
     private boolean isMCRayCastSafe() {
         if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK
                 && mc.hitResult instanceof BlockHitResult blockHitResult) {
-            return blockHitResult.getBlockPos().equals(blockData.position())
-                    && blockHitResult.getDirection().equals(blockData.direction());
+            return blockHitResult.getBlockPos().equals(blockCache.blockPos)
+                    && blockHitResult.getDirection().equals(blockCache.direction);
         }
         return false;
-    }
-
-    private Vec3 getVec() {
-        if (blockData == null)
-            return null;
-
-        BlockPos pos = blockData.position();
-
-        double x = pos.getX() + Math.random();
-        double y = pos.getY() + Math.random();
-        double z = pos.getZ() + Math.random();
-
-        final HitResult movingObjectPosition = mc.hitResult;
-
-        // Fallback vector.
-        switch (blockData.direction) {
-            case DOWN -> y = pos.getY();
-            case UP -> y = pos.getY() + 1;
-            case NORTH -> z = pos.getZ();
-            case SOUTH -> z = pos.getZ() + 1;
-            case WEST -> x = pos.getX();
-            case EAST -> x = pos.getX() + 1;
-        }
-
-        if (movingObjectPosition instanceof BlockHitResult blockHitResult) {
-            if (blockHitResult.getBlockPos().equals(blockData.position()) &&
-                    blockHitResult.getDirection() == blockData.direction()) {
-                x = blockHitResult.getLocation().x;
-                y = blockHitResult.getLocation().y;
-                z = blockHitResult.getLocation().z;
-            }
-        }
-
-        return new Vec3(x, y, z);
-    }
-
-    private int getTotalBlocksInInventory() {
-        int total = 0;
-        for (int i = 0; i < mc.player.getInventory().getContainerSize(); i++) {
-            ItemStack stack = mc.player.getInventory().getItem(i);
-            if (stack.getItem() instanceof BlockItem blockItem) {
-                Block block = blockItem.getBlock();
-                if (ScaffoldWalkUtil.canPlaceBlock(block)) {
-                    total += stack.getCount();
-                }
-            }
-        }
-
-        return total;
-    }
-
-
-    public record BlockData(BlockPos position, Direction direction) {
-        /* w */
     }
 }

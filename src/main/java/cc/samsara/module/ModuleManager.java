@@ -53,14 +53,13 @@ public class ModuleManager extends Manager<cc.samsara.module.Module> {
                 new TargetStrafeModule(),
                 new LegitTSModule(),
                 new NoSlowDownModule(),
-                /*new ScaffoldWalkModule(),*/
                 new SprintModule(),
                 new QuickStopModule(),
                 new ElytraFlightModule(),
                 new SafeWalkModule(),
                 new EntityControlModule(),
                /* new TestAhhh(),*/
-                new ScaffoldRecodeModule(),
+                new ScaffoldModule(),
 
                 //player
                 new NoFallModule(),

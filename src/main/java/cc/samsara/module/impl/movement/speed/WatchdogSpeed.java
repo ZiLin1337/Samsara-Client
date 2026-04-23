@@ -9,8 +9,7 @@ import cc.samsara.event.events.impl.game.movementcorrection.YawCorrectionEvent;
 import cc.samsara.event.events.impl.network.PacketEvent;
 import cc.samsara.module.Module;
 import cc.samsara.module.SubModule;
-import cc.samsara.module.impl.movement.ScaffoldRecodeModule;
-import cc.samsara.module.impl.movement.ScaffoldWalkModule;
+import cc.samsara.module.impl.movement.ScaffoldModule;
 import cc.samsara.property.properties.BooleanProperty;
 import cc.samsara.property.properties.ModeProperty;
 import cc.samsara.property.properties.NumberProperty;
@@ -60,7 +59,7 @@ public class WatchdogSpeed extends SubModule {
         if (mc.player != null) {
             didFireBallDMG = false;
             up = false;
-            //Samsara.getInstance().getModuleManager().getModule(ScaffoldWalkModule.class).startY = mc.player.getBlockY();
+            //Samsara.getInstance().getModuleManager().getModule(ScaffoldModule.class).startY = mc.player.getBlockY();
         }
         super.onEnable();
     }
@@ -69,7 +68,7 @@ public class WatchdogSpeed extends SubModule {
     public void onMotion(MotionEvent event) {
         //how many client is this pasted from raven looking ahhh values
         // stfu they are mine retard
-        if ((Samsara.getInstance().getModuleManager().getModule(ScaffoldRecodeModule.class).isToggled() && mc.options.keyJump.isDown()))
+        if ((Samsara.getInstance().getModuleManager().getModule(ScaffoldModule.class).isToggled() && mc.options.keyJump.isDown()))
             return;
 
         Block underBlock = mc.level.getBlockState(mc.player.blockPosition().below()).getBlock();
@@ -186,7 +185,7 @@ public class WatchdogSpeed extends SubModule {
             double distanceToGround = PlayerUtil.getDistanceToGround();
 
             double roundedDistance = MathUtil.roundToDecimalPlaces(distanceToGround, 2);
-            if ((roundedDistance < 0 || (roundedDistance > (watchdogLowHop.getProperty() ? 1.2 : 1.3) && !Samsara.getInstance().getModuleManager().getModule(ScaffoldWalkModule.class).isToggled())) && experimentalStrafeCheck.getProperty()) {
+            if ((roundedDistance < 0 || (roundedDistance > (watchdogLowHop.getProperty() ? 1.2 : 1.3) && !Samsara.getInstance().getModuleManager().getModule(ScaffoldModule.class).isToggled())) && experimentalStrafeCheck.getProperty()) {
               //  ChatUtil.print("return exp  " + roundedDistance);
                 return;
             }
@@ -207,7 +206,7 @@ public class WatchdogSpeed extends SubModule {
                             mc.player.getZ()
                     ) || offGroundTicks == 9
             )) {
-                if ((distanceToGround < 0 || distanceToGround >= 1) && !experimentalStrafeCheck.getProperty() && !Samsara.getInstance().getModuleManager().getModule(ScaffoldRecodeModule.class).isToggled()) {
+                if ((distanceToGround < 0 || distanceToGround >= 1) && !experimentalStrafeCheck.getProperty() && !Samsara.getInstance().getModuleManager().getModule(ScaffoldModule.class).isToggled()) {
                     ChatUtil.printDebug("return dist " + distanceToGround);
                 }
 

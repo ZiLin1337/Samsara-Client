@@ -6,11 +6,11 @@ import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.TickEvent;
 import cc.samsara.module.Module;
 import cc.samsara.module.SubModule;
-import cc.samsara.module.impl.movement.ScaffoldWalkModule;
+import cc.samsara.module.impl.movement.ScaffoldModule;
 import cc.samsara.util.math.TimeUtil;
 
 public class ModernWatchdogSprint extends SubModule {
-    private final ScaffoldWalkModule sc = (ScaffoldWalkModule) getParentClass();
+    private final ScaffoldModule sc = (ScaffoldModule) getParentClass();
     private final TimeUtil timeUtil = new TimeUtil();
     private final BlinkComponent blinkComponent = Samsara.getInstance().getComponentManager().getComponent(BlinkComponent.class);
     private boolean hasBlinked = false;

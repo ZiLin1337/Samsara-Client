@@ -102,7 +102,7 @@ public class TestModule extends Module {
         float y = mc.player.getYaw() % 90F;
         if (y >= 45) y -= 90;
         if (y < -45) y += 90;
-        if (Math.abs(y) > 22.5 && mc.player.age % 4 == 0 && Samsara.getInstance().getModuleManager().getModule(ScaffoldWalkModule.class).isToggled()) {
+        if (Math.abs(y) > 22.5 && mc.player.age % 4 == 0 && Samsara.getInstance().getModuleManager().getModule(ScaffoldModule.class).isToggled()) {
             mc.player.setSprinting(false);
         } else {
             mc.player.setSprinting(true);
