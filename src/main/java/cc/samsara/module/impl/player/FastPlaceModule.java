@@ -8,7 +8,7 @@ import cc.samsara.module.Module;
 import cc.samsara.property.properties.BooleanProperty;
 import cc.samsara.property.properties.NumberProperty;
 import cc.samsara.util.player.PlayerUtil;
-import cc.samsara.util.player.scaffold.ScaffoldWalkUtil;
+import cc.samsara.util.player.scaffold.ScaffoldUtil;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 
@@ -32,7 +32,7 @@ public class FastPlaceModule extends Module {
 
         if (autoSwap.getProperty() && mc.options.keyUse.isDown()) {
             ItemStack current = mc.player.getMainHandItem();
-            if (current.getItem() instanceof BlockItem blockItem && ScaffoldWalkUtil.canPlaceBlock(blockItem.getBlock()) && current.getCount() <= swapAmount.getProperty().intValue()) {
+            if (current.getItem() instanceof BlockItem blockItem && ScaffoldUtil.canPlaceBlock(blockItem.getBlock()) && current.getCount() <= swapAmount.getProperty().intValue()) {
                 int biggestBlockSlot = findBiggestBlockStack();
                 if (biggestBlockSlot != -1 && biggestBlockSlot != mc.player.getInventory().getSelectedSlot()) {
                     mc.player.getInventory().setSelectedSlot(biggestBlockSlot);
@@ -47,7 +47,7 @@ public class FastPlaceModule extends Module {
 
         for (int i = 0; i < 9; i++) {
             ItemStack stack = mc.player.getInventory().getItem(i);
-            if (stack.getItem() instanceof BlockItem blockItem && ScaffoldWalkUtil.canPlaceBlock(blockItem.getBlock())) {
+            if (stack.getItem() instanceof BlockItem blockItem && ScaffoldUtil.canPlaceBlock(blockItem.getBlock())) {
                 if (stack.getCount() > biggestStackSize) {
                     biggestStackSize = stack.getCount();
                     biggestStackSlot = i;

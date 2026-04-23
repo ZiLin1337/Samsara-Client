@@ -5,7 +5,7 @@ import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.MotionEvent;
 import cc.samsara.module.Module;
 import cc.samsara.module.SubModule;
-import cc.samsara.module.impl.movement.ScaffoldWalkModule;
+import cc.samsara.module.impl.movement.ScaffoldModule;
 import cc.samsara.module.impl.movement.SpeedModule;
 import cc.samsara.property.properties.ModeProperty;
 import cc.samsara.util.math.TimeUtil;
@@ -14,7 +14,7 @@ import cc.samsara.util.render.ChatUtil;
 import net.minecraft.world.phys.Vec3;
 
 public class WatchdogSprint extends SubModule {
-    private final ScaffoldWalkModule sc = (ScaffoldWalkModule) getParentClass();
+    private final ScaffoldModule sc = (ScaffoldModule) getParentClass();
     private final ModeProperty mode = new ModeProperty("Watchdog Sprint Mode", "Jump", "Jump", "Bypass");
     private TimeUtil timeUtil = new TimeUtil();
 

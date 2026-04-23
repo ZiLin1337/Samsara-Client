@@ -14,7 +14,7 @@ public class SprintModule extends Module {
 
     @EventTarget
     public void onUpdate(UpdateEvent event) {
-        if (Samsara.getInstance().getModuleManager().getModule(ScaffoldRecodeModule.class).isToggled()) {
+        if (Samsara.getInstance().getModuleManager().getModule(ScaffoldModule.class).isToggled()) {
             return;
         }
 

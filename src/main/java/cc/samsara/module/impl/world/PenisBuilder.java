@@ -8,7 +8,7 @@ import cc.samsara.module.Category;
 import cc.samsara.module.Module;
 import cc.samsara.property.properties.BooleanProperty;
 import cc.samsara.property.properties.NumberProperty;
-import cc.samsara.util.player.scaffold.ScaffoldWalkUtil;
+import cc.samsara.util.player.scaffold.ScaffoldUtil;
 import java.util.ArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,7 +37,7 @@ public class PenisBuilder extends Module {
     public void onMotion(MotionEvent event) {
         if (!structureInitialized) {
             initializePenis();
-            currentBlockSlot = ScaffoldWalkUtil.getBlockSlot(true).slot();
+            currentBlockSlot = ScaffoldUtil.getBlockSlot(true).slot();
             return;
         }
 

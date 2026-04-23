@@ -5,7 +5,7 @@ import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.MotionEvent;
 import cc.samsara.module.Module;
 import cc.samsara.module.SubModule;
-import cc.samsara.module.impl.movement.ScaffoldWalkModule;
+import cc.samsara.module.impl.movement.ScaffoldModule;
 import cc.samsara.module.impl.movement.SpeedModule;
 import cc.samsara.property.properties.BooleanProperty;
 import cc.samsara.util.math.TimeUtil;
@@ -18,7 +18,7 @@ public class WatchdogVanillaTower extends SubModule {
     public boolean canTower = false;
     public boolean Tower = false;
 
-    private final ScaffoldWalkModule sc = (ScaffoldWalkModule) getParentClass();
+    private final ScaffoldModule sc = (ScaffoldModule) getParentClass();
     private final TimeUtil towerDelayTimer = new TimeUtil();
 
     public WatchdogVanillaTower(Module parentClass) {

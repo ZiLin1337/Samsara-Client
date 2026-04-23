@@ -343,6 +343,13 @@ public class RotationUtil implements IAccess {
         return getRotationFromPosition(targetPos.x, targetPos.y, targetPos.z);
     }
 
+    public static float wrapTo90(float f) {
+        f %= 90F;
+        if (f >= 45) f -= 90;
+        if (f < -45) f += 90;
+        return f;
+    }
+
     public static float getYawBasedPitch(BlockPos blockPos, Direction direction, float currentYaw, float lastPitch,
                                          int maxPitch) {
         for (float i = 30; i <= maxPitch; i += 0.1f + Math.random() / 10) {

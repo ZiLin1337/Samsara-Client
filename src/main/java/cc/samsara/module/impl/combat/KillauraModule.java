@@ -15,7 +15,7 @@ import cc.samsara.event.events.impl.render.Render3DEvent;
 import cc.samsara.event.types.EventModes;
 import cc.samsara.module.Category;
 import cc.samsara.module.Module;
-import cc.samsara.module.impl.movement.ScaffoldRecodeModule;
+import cc.samsara.module.impl.movement.ScaffoldModule;
 import cc.samsara.property.properties.BooleanProperty;
 import cc.samsara.property.properties.ModeProperty;
 import cc.samsara.property.properties.NumberProperty;
@@ -182,7 +182,7 @@ public class KillauraModule extends Module {
     @EventTarget
     public void onTick(TickEvent event) {
         if (event.getEventMode() == EventModes.POST ||
-                Samsara.getInstance().getModuleManager().getModule(ScaffoldRecodeModule.class).isToggled() ||
+                Samsara.getInstance().getModuleManager().getModule(ScaffoldModule.class).isToggled() ||
                 (Samsara.getInstance().getModuleManager().getModule(AntiFireBallModule.class).isToggled() &&
                         Samsara.getInstance().getModuleManager().getModule(AntiFireBallModule.class).target != null)
         ) {
