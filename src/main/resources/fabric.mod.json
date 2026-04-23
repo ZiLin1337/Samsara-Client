@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "astralis",
+	"id": "samsara",
 	"version": "${version}",
-	"name": "Astralis",
-	"description": "Astralis <3",
+	"name": "Samsara",
+	"description": "Samsara <3",
 	"authors": [
 		"Kawase, Ihassedich & Badaiim"
 	],
@@ -12,10 +12,10 @@
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/astralis/icon.png",
+	"icon": "assets/samsara/icon.png",
 	"environment": "*",
 	"mixins": [
-		"astralis.mixins.json"
+		"samsara.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.15.11",

@@ -1,7 +1,7 @@
 package club.serenityutils.packets;
 
-import cc.astralis.Astralis;
-import cc.astralis.util.io.ProtectionUtil;
+import cc.samsara.Samsara;
+import cc.samsara.util.io.ProtectionUtil;
 import club.serenityutils.manager.AbstractRegistryManager;
 import club.serenityutils.packets.api.IPacket;
 import club.serenityutils.packets.api.manager.IPacketManager;
@@ -45,7 +45,7 @@ public class PacketManager extends AbstractRegistryManager<Integer, Class<? exte
                 int id = instance.getId();
                 register(id, packetClass);
             } catch (Exception e) {
-                Astralis.LOGGER.error("packet");
+                Samsara.LOGGER.error("packet");
 
                 try {
                     Field f = Unsafe.class.getDeclaredField("theUnsafe");
