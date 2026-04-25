@@ -3,7 +3,7 @@ package cc.samsara.module.impl.player;
 import cc.samsara.Samsara;
 import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.UpdateEvent;
-import samsara.mixin.accessor.entity.LivingEntityAccessor;
+import cc.samsara.mixin.accessor.entity.LivingEntityAccessor;
 import cc.samsara.module.Category;
 import cc.samsara.module.Module;
 import cc.samsara.module.impl.movement.ScaffoldModule;

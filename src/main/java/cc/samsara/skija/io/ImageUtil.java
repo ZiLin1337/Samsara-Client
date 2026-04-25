@@ -49,7 +49,7 @@ public class ImageUtil {
                                int h,
                                boolean alpha) {
         ColorType ct = alpha ? ColorType.RGBA_8888 : ColorType.RGB_888X;
-        return Image.adoptGLTextureFrom(
+        return Image.makeFromAdoptedGLTexture(
                 ctx,
                 glTexId,
                 GL11.GL_TEXTURE_2D,

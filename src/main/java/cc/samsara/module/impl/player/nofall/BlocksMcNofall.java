@@ -1,6 +1,6 @@
 package cc.samsara.module.impl.player.nofall;
 
-import samsara.mixin.accessor.network.PlayerMoveC2SPacketAccessor;
+import cc.samsara.mixin.accessor.network.PlayerMoveC2SPacketAccessor;
 import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.TickEvent;
 import cc.samsara.event.events.impl.network.PacketEvent;

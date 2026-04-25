@@ -1,4 +1,4 @@
-package cc.samsara.ui.screens.clickgui.samsara;
+package cc.samsara.ui.screens.clickgui.astralis;
 
 import cc.samsara.Samsara;
 import cc.samsara.font.UIFont;
@@ -6,8 +6,8 @@ import cc.samsara.font.FontManager;
 import cc.samsara.module.Category;
 import cc.samsara.module.impl.visual.HudModule;
 import cc.samsara.ui.cloud.CloudConfigComponent;
-import cc.samsara.ui.screens.clickgui.samsara.impl.CategorySelector;
-import cc.samsara.ui.screens.clickgui.samsara.impl.display.CategoryDisplay;
+import cc.samsara.ui.screens.clickgui.astralis.impl.CategorySelector;
+import cc.samsara.ui.screens.clickgui.astralis.impl.display.CategoryDisplay;
 import cc.samsara.util.language.Lazy;
 import cc.samsara.skija.SkijaManager;
 import cc.samsara.skija.utils.SkijaHelperUtil;
@@ -28,7 +28,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
-public class SamsaraClickGUI extends Screen {
+public class AstralisClickGUI extends Screen {
     private static final Color BACKGROUND = new Color(25, 25, 25);
     private static final Color FOREGROUND = new Color(30, 30, 30);
 //    private static final Color OUTLINE = new Color(60, 60, 60);
@@ -47,7 +47,7 @@ public class SamsaraClickGUI extends Screen {
         return paint;
     });
 
-    public SamsaraClickGUI() {
+    public AstralisClickGUI() {
         super(Component.nullToEmpty(""));
 
         float categoriesHeight = 0;

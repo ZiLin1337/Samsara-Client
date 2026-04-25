@@ -1,11 +1,11 @@
-package cc.samsara.ui.screens.clickgui.samsara.impl;
+package cc.samsara.ui.screens.clickgui.astralis.impl;
 
 import cc.samsara.Samsara;
 import cc.samsara.font.UIFont;
 import cc.samsara.font.FontManager;
 import cc.samsara.module.Category;
 import cc.samsara.module.impl.visual.HudModule;
-import cc.samsara.ui.screens.clickgui.samsara.Component;
+import cc.samsara.ui.screens.clickgui.astralis.Component;
 import cc.samsara.util.render.RenderUtil;
 import cc.samsara.skija.utils.SkijaUtil;
 

@@ -2,7 +2,7 @@ package cc.samsara.ui.screens.altmanager.login.guis;
 
 import cc.samsara.Samsara;
 import cc.samsara.interfaces.IAccess;
-import samsara.mixin.accessor.mc.MinecraftClientSessionAccessor;
+import cc.samsara.mixin.accessor.mc.MinecraftClientSessionAccessor;
 import cc.samsara.ui.imgui.ImGuiImpl;
 import cc.samsara.ui.imgui.windows.FileExplorerWindow;
 import cc.samsara.ui.screens.altmanager.AltManagerScreen;

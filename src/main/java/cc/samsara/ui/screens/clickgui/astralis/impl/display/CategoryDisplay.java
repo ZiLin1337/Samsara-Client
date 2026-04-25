@@ -1,9 +1,9 @@
-package cc.samsara.ui.screens.clickgui.samsara.impl.display;
+package cc.samsara.ui.screens.clickgui.astralis.impl.display;
 
 import cc.samsara.Samsara;
 import cc.samsara.module.Category;
 import cc.samsara.module.Module;
-import cc.samsara.ui.screens.clickgui.samsara.Component;
+import cc.samsara.ui.screens.clickgui.astralis.Component;
 import cc.samsara.util.render.RenderUtil;
 import cc.samsara.skija.utils.SkijaUtil;
 

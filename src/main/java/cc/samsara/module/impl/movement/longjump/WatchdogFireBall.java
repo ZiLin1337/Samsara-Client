@@ -5,7 +5,7 @@ import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.MoveEvent;
 import cc.samsara.event.events.impl.game.UpdateEvent;
 import cc.samsara.event.events.impl.network.PacketEvent;
-import samsara.mixin.accessor.network.EntityVelocityUpdateS2CPacketAccessor;
+import cc.samsara.mixin.accessor.network.EntityVelocityUpdateS2CPacketAccessor;
 import cc.samsara.module.Module;
 import cc.samsara.module.SubModule;
 import cc.samsara.module.impl.combat.VelocityModule;

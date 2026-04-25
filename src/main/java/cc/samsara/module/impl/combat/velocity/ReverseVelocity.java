@@ -3,7 +3,7 @@ package cc.samsara.module.impl.combat.velocity;
 import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.network.PacketEvent;
 import cc.samsara.event.types.EventModes;
-import samsara.mixin.accessor.network.EntityVelocityUpdateS2CPacketAccessor;
+import cc.samsara.mixin.accessor.network.EntityVelocityUpdateS2CPacketAccessor;
 import cc.samsara.module.Module;
 import cc.samsara.module.SubModule;
 import cc.samsara.property.properties.NumberProperty;

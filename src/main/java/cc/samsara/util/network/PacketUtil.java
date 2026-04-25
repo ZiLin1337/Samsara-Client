@@ -5,7 +5,7 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.prediction.PredictiveAction;
 import net.minecraft.network.protocol.Packet;
 import cc.samsara.interfaces.IAccess;
-import samsara.mixin.accessor.player.ClientPlayerInteractionManagerAccessor;
+import cc.samsara.mixin.accessor.player.ClientPlayerInteractionManagerAccessor;
 
 public class PacketUtil implements IAccess {
     public record TimedPacket(Packet<?> packet, long time) {

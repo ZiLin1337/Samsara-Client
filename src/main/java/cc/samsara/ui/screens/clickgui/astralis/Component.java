@@ -1,4 +1,4 @@
-package cc.samsara.ui.screens.clickgui.samsara;
+package cc.samsara.ui.screens.clickgui.astralis;
 
 import lombok.Getter;
 import lombok.Setter;

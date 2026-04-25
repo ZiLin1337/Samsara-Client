@@ -1,11 +1,11 @@
-package cc.samsara.ui.screens.clickgui.samsara.impl.display.property;
+package cc.samsara.ui.screens.clickgui.astralis.impl.display.property;
 
 import cc.samsara.font.UIFont;
 import cc.samsara.font.FontManager;
 import cc.samsara.module.SubModule;
 import cc.samsara.property.properties.ClassModeProperty;
-import cc.samsara.ui.screens.clickgui.samsara.Component;
-import cc.samsara.ui.screens.clickgui.samsara.impl.display.ModuleDisplay;
+import cc.samsara.ui.screens.clickgui.astralis.Component;
+import cc.samsara.ui.screens.clickgui.astralis.impl.display.ModuleDisplay;
 import cc.samsara.util.render.RenderUtil;
 
 import java.util.ArrayList;

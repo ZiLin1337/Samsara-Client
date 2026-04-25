@@ -1,6 +1,6 @@
 package cc.samsara.util.network;
 
-import samsara.mixin.accessor.mc.IdentifierAccessor;
+import cc.samsara.mixin.accessor.mc.IdentifierAccessor;
 import cc.samsara.Samsara;
 import cc.samsara.ui.screens.altmanager.AltManagerScreen;
 import cc.samsara.ui.screens.altmanager.microsoft.MicrosoftLogin;
@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import cc.samsara.interfaces.IAccess;
-import samsara.mixin.accessor.mc.MinecraftClientSessionAccessor;
+import cc.samsara.mixin.accessor.mc.MinecraftClientSessionAccessor;
 import cc.samsara.ui.screens.altmanager.alts.Alt;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
