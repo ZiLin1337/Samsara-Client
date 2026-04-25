@@ -2,7 +2,7 @@ package cc.samsara.util.gif;
 
 import cc.samsara.interfaces.IAccess;
 import com.mojang.blaze3d.platform.NativeImage;
-import samsara.mixin.accessor.mc.IdentifierAccessor;
+import cc.samsara.mixin.accessor.mc.IdentifierAccessor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

@@ -1,6 +1,6 @@
 package cc.samsara.module.impl.world;
 
-import samsara.mixin.accessor.player.AccessorClientPlayerInteractionManager;
+import cc.samsara.mixin.accessor.player.AccessorClientPlayerInteractionManager;
 import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.UpdateEvent;
 import cc.samsara.module.Category;

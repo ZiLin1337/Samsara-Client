@@ -1,6 +1,6 @@
 package cc.samsara.module.impl.combat;
 
-import samsara.mixin.accessor.player.ClientPlayerInteractionManagerAccessor;
+import cc.samsara.mixin.accessor.player.ClientPlayerInteractionManagerAccessor;
 import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.EntityInteractEvent;
 import cc.samsara.event.events.impl.game.TickEvent;

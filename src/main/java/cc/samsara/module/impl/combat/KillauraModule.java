@@ -1,6 +1,6 @@
 package cc.samsara.module.impl.combat;
 
-import samsara.mixin.accessor.mc.KeyBindingAccessor;
+import cc.samsara.mixin.accessor.mc.KeyBindingAccessor;
 import cc.samsara.Samsara;
 import cc.samsara.component.impl.network.BlinkComponent;
 import cc.samsara.component.impl.player.RotationComponent;

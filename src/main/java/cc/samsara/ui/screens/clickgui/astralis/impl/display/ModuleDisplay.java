@@ -1,4 +1,4 @@
-package cc.samsara.ui.screens.clickgui.samsara.impl.display;
+package cc.samsara.ui.screens.clickgui.astralis.impl.display;
 
 import cc.samsara.Samsara;
 import cc.samsara.font.FontManager;
@@ -8,8 +8,8 @@ import cc.samsara.property.Property;
 import cc.samsara.property.properties.*;
 import cc.samsara.ui.animations.Animation;
 import cc.samsara.ui.animations.Easing;
-import cc.samsara.ui.screens.clickgui.samsara.Component;
-import cc.samsara.ui.screens.clickgui.samsara.impl.display.property.*;
+import cc.samsara.ui.screens.clickgui.astralis.Component;
+import cc.samsara.ui.screens.clickgui.astralis.impl.display.property.*;
 import cc.samsara.util.render.RenderUtil;
 import cc.samsara.skija.utils.SkijaUtil;
 

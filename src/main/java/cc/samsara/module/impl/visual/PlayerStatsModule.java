@@ -5,7 +5,7 @@ import cc.samsara.drag.Draggable;
 import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.render.Render2DEvent;
 import cc.samsara.interfaces.access.IDrag;
-import samsara.mixin.accessor.render.PlayerListHudAccessor;
+import cc.samsara.mixin.accessor.render.PlayerListHudAccessor;
 import cc.samsara.module.Category;
 import cc.samsara.module.Module;
 import cc.samsara.module.impl.combat.AntiBotModule;

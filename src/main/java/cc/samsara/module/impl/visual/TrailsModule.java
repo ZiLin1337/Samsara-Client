@@ -1,6 +1,6 @@
 package cc.samsara.module.impl.visual;
 
-import samsara.mixin.accessor.render.BufferBuilderStorageAccessor;
+import cc.samsara.mixin.accessor.render.BufferBuilderStorageAccessor;
 import cc.samsara.Samsara;
 import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.MotionEvent;

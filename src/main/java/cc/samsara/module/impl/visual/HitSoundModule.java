@@ -1,6 +1,6 @@
 package cc.samsara.module.impl.visual;
 
-import samsara.mixin.accessor.mc.IdentifierAccessor;
+import cc.samsara.mixin.accessor.mc.IdentifierAccessor;
 import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.EntityInteractEvent;
 import cc.samsara.module.Category;

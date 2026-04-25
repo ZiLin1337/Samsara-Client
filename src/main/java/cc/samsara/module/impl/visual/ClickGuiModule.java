@@ -7,7 +7,7 @@ import cc.samsara.property.properties.BooleanProperty;
 import cc.samsara.property.properties.ColorProperty;
 import cc.samsara.property.properties.ModeProperty;
 import cc.samsara.property.properties.NumberProperty;
-import cc.samsara.ui.screens.clickgui.samsara.SamsaraClickGUI;
+import cc.samsara.ui.screens.clickgui.astralis.AstralisClickGUI;
 import cc.samsara.ui.screens.clickgui.dropdown.DropdownCGUIScreen;
 import cc.samsara.ui.imgui.windows.ClickGuiWindow;
 import org.lwjgl.glfw.GLFW;
@@ -28,7 +28,7 @@ public class ClickGuiModule extends Module {
 
     private final ClickGuiWindow imgui = new ClickGuiWindow();
 
-    private SamsaraClickGUI samsaraScreen;
+    private AstralisClickGUI samsaraScreen;
     private DropdownCGUIScreen dropdownScreen;
    // private final PowerShellCguiScreen powerShellCguiScreen = new PowerShellCguiScreen();
 
@@ -53,7 +53,7 @@ public class ClickGuiModule extends Module {
             case "Imgui" ->  mc.setScreen(imgui);
             case "Samsara" -> {
                 if (samsaraScreen == null) {
-                    samsaraScreen = new SamsaraClickGUI();
+                    samsaraScreen = new AstralisClickGUI();
                 }
 
                 mc.setScreen(samsaraScreen);

@@ -1,7 +1,7 @@
 package cc.samsara.util.network;
 
 import cc.samsara.interfaces.IAccess;
-import samsara.mixin.accessor.mc.MinecraftClientSessionAccessor;
+import cc.samsara.mixin.accessor.mc.MinecraftClientSessionAccessor;
 import cc.samsara.ui.screens.altmanager.microsoft.MicrosoftLogin;
 import javax.net.ssl.HttpsURLConnection;
 import net.minecraft.client.User;

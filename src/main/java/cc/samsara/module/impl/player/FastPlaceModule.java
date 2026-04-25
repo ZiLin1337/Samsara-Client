@@ -2,7 +2,7 @@ package cc.samsara.module.impl.player;
 
 import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.TickEvent;
-import samsara.mixin.accessor.mc.MinecraftClientSessionAccessor;
+import cc.samsara.mixin.accessor.mc.MinecraftClientSessionAccessor;
 import cc.samsara.module.Category;
 import cc.samsara.module.Module;
 import cc.samsara.property.properties.BooleanProperty;

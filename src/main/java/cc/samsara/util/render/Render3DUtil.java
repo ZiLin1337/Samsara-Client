@@ -1,6 +1,6 @@
 package cc.samsara.util.render;
 
-import samsara.mixin.accessor.render.BufferBuilderStorageAccessor;
+import cc.samsara.mixin.accessor.render.BufferBuilderStorageAccessor;
 import cc.samsara.Samsara;
 import cc.samsara.interfaces.IAccess;
 import cc.samsara.module.impl.visual.HudModule;

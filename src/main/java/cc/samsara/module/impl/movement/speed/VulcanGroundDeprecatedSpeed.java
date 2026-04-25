@@ -2,7 +2,7 @@ package cc.samsara.module.impl.movement.speed;
 
 import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.MotionEvent;
-import samsara.mixin.accessor.entity.LivingEntityAccessor;
+import cc.samsara.mixin.accessor.entity.LivingEntityAccessor;
 import cc.samsara.module.Module;
 import cc.samsara.module.SubModule;
 import cc.samsara.util.math.TimeUtil;

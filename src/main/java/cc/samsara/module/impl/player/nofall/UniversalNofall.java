@@ -2,7 +2,7 @@ package cc.samsara.module.impl.player.nofall;
 
 import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.PostMotionEvent;
-import samsara.mixin.accessor.entity.EntityAccessor;
+import cc.samsara.mixin.accessor.entity.EntityAccessor;
 import cc.samsara.module.Module;
 import cc.samsara.module.SubModule;
 import cc.samsara.util.network.PacketUtil;
