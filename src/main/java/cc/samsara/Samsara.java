@@ -5,6 +5,7 @@ import cc.samsara.component.ComponentManager;
 import cc.samsara.config.ConfigManager;
 import cc.samsara.config.impl.AltConfig;
 import cc.samsara.config.impl.DraggableConfig;
+import cc.samsara.deeplearning.MLManager;
 import cc.samsara.event.EventManager;
 import cc.samsara.friends.FriendManager;
 import cc.samsara.interfaces.IAccess;
@@ -50,6 +51,7 @@ public class Samsara implements IAccess {
     private ConfigManager configManager;
     private CommandManager commandManager;
     private FriendManager friendManager;
+    private MLManager mlManager;
     private AltConfig altConfig;
     private DraggableConfig draggableConfig;
     private SkijaImpl skija;
@@ -78,6 +80,7 @@ public class Samsara implements IAccess {
         configManager = new ConfigManager();
         commandManager = new CommandManager();
         friendManager = new FriendManager();
+        mlManager = new MLManager();
         skija = new SkijaImpl();
 
         // auth
@@ -131,4 +134,21 @@ public class Samsara implements IAccess {
     public Color getSecondColor() {
         return getModuleManager().getModule(HudModule.class).secondColor.getProperty();
     }
-}
+}/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'

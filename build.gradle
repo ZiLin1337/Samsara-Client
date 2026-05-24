@@ -29,6 +29,11 @@ dependencies {
     implementation 'org.json:json:20240303'
     implementation 'javazoom:jlayer:1.0.1'
     implementation 'com.github.Redstone0x00:MediaPlayerInfo:v1.1'
+
+    implementation platform("ai.djl:bom:0.28.0")
+    implementation "ai.djl:api"
+    runtimeOnly "ai.djl.pytorch:pytorch-model-zoo"
+    runtimeOnly "ai.djl.pytorch:pytorch-native-auto"
 }
 
 java {
@@ -51,3 +56,9 @@ tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
     it.options.release = 21
 }
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'

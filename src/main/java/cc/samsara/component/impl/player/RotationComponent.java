@@ -4,6 +4,7 @@ import cc.samsara.Samsara;
 import cc.samsara.component.Component;
 import cc.samsara.event.EventTarget;
 import cc.samsara.event.events.impl.game.MotionEvent;
+import cc.samsara.event.events.impl.game.RotationEvent;
 import cc.samsara.event.events.impl.game.UpdateEvent;
 import cc.samsara.event.events.impl.game.movementcorrection.JumpCorrectionEvent;
 import cc.samsara.event.events.impl.game.movementcorrection.YawCorrectionEvent;
@@ -41,7 +42,10 @@ public class RotationComponent extends Component {
      * run on tick (if u run it on update it might break depends) to work
      */
     public static void setRotations(float yaw, float pitch, float yawSpeed, float pitchSpeed) {
-        RotationComponent.targetRotations = new float[]{yaw, pitch};
+        RotationEvent rotationEvent = new RotationEvent(yaw, pitch);
+        Samsara.getInstance().getEventManager().call(rotationEvent);
+
+        RotationComponent.targetRotations = new float[]{rotationEvent.getYaw(), rotationEvent.getPitch()};
         RotationComponent.yawSpeed = yawSpeed;
         RotationComponent.pitchSpeed = pitchSpeed;
 
@@ -50,7 +54,10 @@ public class RotationComponent extends Component {
     }
 
     public static void setRotations(float[] rotations, float yawSpeed, float pitchSpeed) {
-        RotationComponent.targetRotations = rotations;
+        RotationEvent rotationEvent = new RotationEvent(rotations[0], rotations[1]);
+        Samsara.getInstance().getEventManager().call(rotationEvent);
+
+        RotationComponent.targetRotations = new float[]{rotationEvent.getYaw(), rotationEvent.getPitch()};
         RotationComponent.yawSpeed = yawSpeed;
         RotationComponent.pitchSpeed = pitchSpeed;
 
@@ -214,3 +221,15 @@ public class RotationComponent extends Component {
         return rotations[1];
     }
 }
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
+/home/engine/.bashrc: line 1: syntax error near unexpected token `('
+/home/engine/.bashrc: line 1: `. /etc/profile.d/workload-containment.shn# ~/.bashrc: executed by bash(1) for non-login shells.'
