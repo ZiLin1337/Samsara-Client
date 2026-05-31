@@ -41,7 +41,7 @@ public class MixVelocity extends SubModule {
     private boolean shouldAttack = false;
     private boolean wasSprinting = false;
     private boolean isSuspending = false;
-    private final LinkedBlockingDeque<Packet<ClientGamePacketListener>> packetQueue = new LinkedBlockingDeque<>();
+    private final LinkedBlockingDeque<Packet<?>> packetQueue = new LinkedBlockingDeque<>();
     private int lastTickCount = 0;
     private int webHitCount = 0;
     private int airTicks = 0;

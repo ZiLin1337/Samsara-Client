@@ -34,8 +34,8 @@ public class JumpResetVelocity extends SubModule {
 
     private ClientboundSetEntityMotionPacket knockbackPacket;
     private int rotationHeldTicks = 0;
-    private final LinkedBlockingDeque<Packet<ClientGamePacketListener>> packetQueue = new LinkedBlockingDeque<>();
-    private Packet<ClientGamePacketListener> pendingPacket;
+    private final LinkedBlockingDeque<Packet<?>> packetQueue = new LinkedBlockingDeque<>();
+    private Packet<?> pendingPacket;
     private boolean isSuspending = false;
     private int delayTicks = 0;
     private Phase currentPhase = Phase.IDLE;
@@ -106,7 +106,7 @@ public class JumpResetVelocity extends SubModule {
         if (!this.packetQueue.isEmpty() && dropPending && this.packetQueue.getFirst() == this.pendingPacket) {
             this.packetQueue.pollFirst();
         }
-        Packet<ClientGamePacketListener> packet;
+        Packet<?> packet;
         while ((packet = this.packetQueue.poll()) != null) {
             try {
                 packet.handle(connection);
