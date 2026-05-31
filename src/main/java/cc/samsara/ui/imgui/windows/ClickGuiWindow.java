@@ -334,12 +334,12 @@ public class ClickGuiWindow extends Screen implements IAccess {
             return true;
         }
 
-        if (input.input() == GLFW.GLFW_KEY_ESCAPE && !shouldSetKey) {
+        if (input.key() == GLFW.GLFW_KEY_ESCAPE && !shouldSetKey) {
             mc.setScreen(null);
         }
 
         if (shouldSetKey) {
-            module.setKeyCode(input.input() == GLFW.GLFW_KEY_ESCAPE ? 0 : input.input());
+            module.setKeyCode(input.key() == GLFW.GLFW_KEY_ESCAPE ? 0 : input.key());
             shouldSetKey = false;
         }
 

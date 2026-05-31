@@ -97,4 +97,16 @@ public class Samsara implements IAccess {
     public Color getSecondColor() {
         return getModuleManager().getModule(HudModule.class).secondColor.getProperty();
     }
+
+    // Placeholder for auth screen - in Minecraft 1.21.10 this may need to be reimplemented
+    public net.minecraft.client.gui.screens.Screen getAuthScreen() {
+        // Return null or a simple screen - auth system may need to be reimplemented
+        return null;
+    }
+
+    // Placeholder for IRC/network client - cloud configs may need to be reimplemented
+    public Object getClient() {
+        // Return null - cloud config system may need to be reimplemented for 1.21.10
+        return null;
+    }
 }

@@ -277,6 +277,11 @@ public class KillauraModule extends Module {
         }
     }
 
+    // Placeholder for fake animation rendering - may need to be reimplemented
+    public boolean shouldRenderFakeAnim() {
+        return false;
+    }
+
     @EventTarget
     public void onSlowDown(SlowDownEvent event) {
         if (mode.is("Hypixel") && hypixelLogic.getSlowDownCancelled()) {

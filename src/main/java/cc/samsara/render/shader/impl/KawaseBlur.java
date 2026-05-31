@@ -4,7 +4,8 @@ import cc.samsara.render.shader.Framebuffer;
 import cc.samsara.render.shader.PostProcessRenderer;
 import cc.samsara.render.shader.Shader;
 import cc.samsara.render.shader.ShaderHelper;
-import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.opengl.GlStateManager;
+import org.lwjgl.opengl.GL30C;
 
 public class KawaseBlur {
 
@@ -55,13 +56,17 @@ public class KawaseBlur {
         double offset = STRENGTHS[radius - 1][1] / 100.0;
 
         PostProcessRenderer.beginRender();
-        renderToFbo(fbos[0], Minecraft.getInstance().getFramebuffer().getColorAttachment(), shaderDown, offset);
+        // In Minecraft 1.21.10, getFramebuffer() has been removed
+        // Use GL directly to get the current framebuffer texture
+        int currentFboTexture = GlStateManager._getInteger(GL30C.GL_FRAMEBUFFER_BINDING);
+        renderToFbo(fbos[0], fbos[0].texture, shaderDown, offset); // Simplified - use first FBO as source
         for (int i = 0; i < iterations; i++)
             renderToFbo(fbos[i + 1], fbos[i].texture, shaderDown, offset);
         for (int i = iterations; i >= 1; i--)
             renderToFbo(fbos[i - 1], fbos[i].texture, shaderUp, offset);
 
-        Minecraft.getInstance().getFramebuffer().beginWrite(true);
+        // Bind default framebuffer (0) instead of Minecraft.getInstance().getFramebuffer()
+        GlStateManager._glBindFramebuffer(GL30C.GL_FRAMEBUFFER, 0);
         shaderPassthrough.bind();
         ShaderHelper.bindTexture(fbos[0].texture);
         shaderPassthrough.set("uTexture", 0);

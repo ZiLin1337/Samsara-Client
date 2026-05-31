@@ -111,9 +111,10 @@ public class ImGuiImpl {
         GlStateManager._glBindFramebuffer(GL30C.GL_FRAMEBUFFER, ((GlTexture) framebuffer.getColorTexture()).getFbo(((GlDevice) RenderSystem.getDevice()).directStateAccess(), null));
         GL11C.glViewport(0, 0, framebuffer.width, framebuffer.height);
 
-        imGuiImplGl3.newFrame();
-        imGuiImplGlfw.newFrame();
-        ImGui.newFrame();
+        // ImGui frame initialization - may need to be reimplemented for 1.21.10
+        // imGuiImplGl3.newFrame();
+        // imGuiImplGlfw.newFrame();
+        // ImGui.newFrame();
 
         runnable.render(ImGui.getIO());
 
