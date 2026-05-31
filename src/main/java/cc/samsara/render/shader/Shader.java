@@ -12,12 +12,12 @@ import org.apache.commons.io.IOUtils;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 public class Shader {
     private static final FloatBuffer MAT = BufferUtils.createFloatBuffer(4 * 4);
@@ -66,7 +66,7 @@ public class Shader {
      */
     private static String readResource(String namespace, String path) {
         try {
-            InputStream in = MinecraftClient.getInstance().getResourceManager()
+            InputStream in = Minecraft.getInstance().getResourceManager()
                 .getResource(net.minecraft.util.Identifier.of(namespace, path))
                 .get().getInputStream();
             return IOUtils.toString(in, StandardCharsets.UTF_8);

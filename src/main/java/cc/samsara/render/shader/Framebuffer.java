@@ -14,9 +14,9 @@ import static org.lwjgl.opengl.GL30C.GL_FRAMEBUFFER;
 
 import org.lwjgl.opengl.GL30C;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.opengl.GlStateManager;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.Window;
 
 public class Framebuffer {
@@ -35,7 +35,7 @@ public class Framebuffer {
     }
 
     private void init() {
-        Window window = MinecraftClient.getInstance().getWindow();
+        Window window = Minecraft.getInstance().getWindow();
         id = GlStateManager.glGenFramebuffers();
         bind();
         texture = GlStateManager._genTexture();
@@ -61,7 +61,7 @@ public class Framebuffer {
     }
 
     public void unbind() {
-        MinecraftClient.getInstance().getFramebuffer().beginWrite(false);
+        Minecraft.getInstance().getFramebuffer().beginWrite(false);
     }
 
     public void resize() {
