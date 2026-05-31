@@ -67,7 +67,7 @@ public class Shader {
     private static String readResource(String namespace, String path) {
         try {
             InputStream in = Minecraft.getInstance().getResourceManager()
-                .getResource(net.minecraft.util.Identifier.of(namespace, path))
+                .getResource(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(namespace, path))
                 .get().getInputStream();
             return IOUtils.toString(in, StandardCharsets.UTF_8);
         } catch (IOException e) {

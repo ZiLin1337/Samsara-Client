@@ -45,8 +45,9 @@ public class Framebuffer {
         ShaderHelper.textureParam(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         ShaderHelper.textureParam(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         ShaderHelper.textureParam(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        width = (int) (window.getFramebufferWidth() * sizeMulti);
-        height = (int) (window.getFramebufferHeight() * sizeMulti);
+        // Use window dimensions - in 1.21.10 these methods may have changed
+        width = (int) (window.getWidth() * sizeMulti);
+        height = (int) (window.getHeight() * sizeMulti);
         ShaderHelper.textureImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, null);
         ShaderHelper.framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
         unbind();

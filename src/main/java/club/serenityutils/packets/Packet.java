@@ -1,16 +1,11 @@
 package club.serenityutils.packets;
 
 import cc.samsara.Samsara;
-import cc.samsara.protection.Flags;
 import cc.samsara.protection.util.Base64;
 import club.serenityutils.packets.api.IPacket;
 import club.serenityutils.utils.EncryptionUtil;
 import com.google.gson.JsonObject;
 import org.java_websocket.client.WebSocketClient;
-import sun.misc.Unsafe;
-
-import java.lang.reflect.Field;
-import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Packet implements IPacket {
     protected String receiver;
@@ -45,56 +40,12 @@ public abstract class Packet implements IPacket {
     public void sendPacket(WebSocketClient socket) {
         try {
             if (!socket.isOpen()) {
-                if (Flags.didDisconnect && !Flags.didReconnect && Flags.reconnectTime.finished(10000)) {
-                    Samsara.LOGGER.error("Network violation 0x08");
-
-                    // crash
-                    try {
-                        Field f = Unsafe.class.getDeclaredField("theUnsafe");
-                        f.setAccessible(true);
-                        Unsafe unsafe = (Unsafe) f.get(null);
-
-                        long corruptValue = ThreadLocalRandom.current().nextLong();
-                        long randomAddress = ThreadLocalRandom.current().nextLong(1, Long.MAX_VALUE);
-                        int haltCode = ThreadLocalRandom.current().nextInt(1, 256);
-
-                        unsafe.putLong(Thread.currentThread(), 8L, corruptValue);
-                        unsafe.putAddress(randomAddress, 0);
-                        Runtime.getRuntime().halt(haltCode);
-
-                    } catch (Throwable ignored) {
-                        for (long l = Long.MIN_VALUE; l < Long.MAX_VALUE; ++l) {
-                            --l;
-                        }
-                    }
-                    throw new RuntimeException("gay");
-                }
+                Samsara.LOGGER.error("Socket is not open");
+                return;
             }
             socket.send(dataToString());
         } catch (Exception e) {
-            if (Flags.didDisconnect && !Flags.didReconnect && Flags.reconnectTime.finished(10000)) {
-                Samsara.LOGGER.error("Network violation 0x08");
-
-                // crash
-                try {
-                    Field f = Unsafe.class.getDeclaredField("theUnsafe");
-                    f.setAccessible(true);
-                    Unsafe unsafe = (Unsafe) f.get(null);
-
-                    long corruptValue = ThreadLocalRandom.current().nextLong();
-                    long randomAddress = ThreadLocalRandom.current().nextLong(1, Long.MAX_VALUE);
-                    int haltCode = ThreadLocalRandom.current().nextInt(1, 256);
-
-                    unsafe.putLong(Thread.currentThread(), 8L, corruptValue);
-                    unsafe.putAddress(randomAddress, 0);
-                    Runtime.getRuntime().halt(haltCode);
-
-                } catch (Throwable ignored) {
-                    for (long l = Long.MIN_VALUE; l < Long.MAX_VALUE; ++l) {
-                        --l;
-                    }
-                }
-            }
+            Samsara.LOGGER.error("Failed to send packet: {}", e.getMessage());
         }
     }
 
@@ -108,7 +59,6 @@ public abstract class Packet implements IPacket {
                 EncryptionUtil.encrypt(String.valueOf(id), dynamicKey, validKeyRandom)
         );
 
-        // this is useless. I will remove it later :pray:.
         if (receiver != null)
             json.addProperty(EncryptionUtil.encrypt("receiver", dynamicKey, validKeyRandom), EncryptionUtil.encrypt(receiver, dynamicKey, validKeyRandom));
 
@@ -134,7 +84,6 @@ public abstract class Packet implements IPacket {
         jsonObject.addProperty(EncryptionUtil.encrypt(property, dynamicKey, validKeyRandom), EncryptionUtil.encrypt(String.valueOf(value), dynamicKey, validKeyRandom));
     }
 
-    // I could also use builders tbh
     protected void addPropertiesToJson(JsonObject jsonObject, Object... properties) {
         if (properties.length % 2 != 0) {
             throw new IllegalArgumentException("Properties must be provided in name/value pairs");

@@ -147,7 +147,7 @@ public class MixinInGameHud {
 
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     private void renderCrosshair(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
-        if (mc.screen instanceof DropdownCGUIScreen || mc.screen instanceof AstralisClickGUI || mc.screen instanceof ClickGuiWindow) {
+        if (mc.screen instanceof DropdownCGUIScreen || mc.screen instanceof ClickGuiWindow) {
             ci.cancel();
         }
     }
