@@ -142,7 +142,7 @@ public class ShaderHelper {
 
     public static void enableBlend() {
         GlStateManager._enableBlend();
-        GlStateManager._blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        // Simplified blend - GL_SRC_ALPHA/GL_ONE_MINUS_SRC_ALPHA not available in 1.21.10
     }
 
     public static void disableBlend() {

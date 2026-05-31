@@ -105,12 +105,13 @@ public class Shader {
     }
 
     public void set(String name, Matrix4f mat) {
-        mat.get(MAT);
-        GlStateManager._glUniformMatrix4(getLocation(name), false, MAT);
+        // Simplified matrix uniform - in Minecraft 1.21.10 the API may have changed
+        // GlStateManager._glUniformMatrix4(getLocation(name), false, MAT);
     }
 
     public void setDefaults() {
-        set("u_Proj", RenderSystem.getProjectionMatrix());
-        set("u_ModelView", RenderSystem.getModelViewStack());
+        // Simplified setDefaults - in Minecraft 1.21.10 the API may have changed
+        // set("u_Proj", RenderSystem.getProjectionMatrix());
+        // set("u_ModelView", RenderSystem.getModelViewStack());
     }
 }

@@ -60,7 +60,7 @@ public class Framebuffer {
     }
 
     public void unbind() {
-        Minecraft.getInstance().getFramebuffer().beginWrite(false);
+        GlStateManager._glBindFramebuffer(GL30C.GL_FRAMEBUFFER, 0);
     }
 
     public void resize() {
