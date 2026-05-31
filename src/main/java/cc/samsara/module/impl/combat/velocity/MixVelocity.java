@@ -16,7 +16,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundPingPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
@@ -110,8 +109,7 @@ public class MixVelocity extends SubModule {
             // Queue movement/position packets during suspension
             if (isSuspending) {
                 if (packet instanceof ClientboundMoveEntityPacket
-                        || packet instanceof ClientboundPingPacket
-                        || packet instanceof ClientboundTeleportEntityPacket) {
+                    || packet instanceof ClientboundTeleportEntityPacket) {
                     packetQueue.add(packet);
                     event.setCancelled(true);
                 }

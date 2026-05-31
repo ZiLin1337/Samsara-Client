@@ -17,7 +17,6 @@ import org.lwjgl.opengl.GL30C;
 import com.mojang.blaze3d.opengl.GlStateManager;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.util.Window;
 
 public class Framebuffer {
     private int id;
