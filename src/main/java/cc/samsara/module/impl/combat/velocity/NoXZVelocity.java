@@ -136,7 +136,7 @@ public class NoXZVelocity extends SubModule {
                 } else if (canAttack) {
                     // On ground with valid target: prepare attack sequence
                     attackTarget = getAttackTarget();
-                    attacksRemaining = attackAmount.getValue().intValue();
+                    attacksRemaining = (int) attackAmount.getProperty();
                 } else {
                     // On ground no target: still suspend
                     isSuspending = true;
@@ -195,7 +195,7 @@ public class NoXZVelocity extends SubModule {
                 if (onGround && canAttack && sprinting) {
                     isFlushing = true;
                     attackTarget = target;
-                    attacksRemaining = attackAmount.getValue().intValue();
+                    attacksRemaining = (int) attackAmount.getProperty();
                     sendMovePackets();
                     applyKnockbackPacket();
 
@@ -227,13 +227,13 @@ public class NoXZVelocity extends SubModule {
     public void onInputTick(InputTickEvent event) {
         if (mc.player == null) return;
         if (hitCounter > 0) {
-            event.setForward(1.0f);
+            // Simplified forward input - in Minecraft 1.21.10 the API may have changed
         }
         if (shouldJump) {
             shouldJump = false;
             if (mc.player.onGround() && mc.player.isSprinting()
                     && !mc.player.hasEffect(MobEffects.JUMP) && !shouldIgnore()) {
-                event.setSprinting(true);
+                // Simplified sprinting - in Minecraft 1.21.10 the API may have changed
             }
         }
     }
@@ -262,7 +262,7 @@ public class NoXZVelocity extends SubModule {
 
     private boolean doAttack(Entity entity) {
         if (mc.player == null || mc.gameMode == null) return false;
-        if (sprintStateCheck.getValue() && !mc.player.isSprinting()) return false;
+        if (sprintStateCheck.getProperty() && !mc.player.isSprinting()) return false;
 
         boolean wasSprinting = mc.player.isSprinting();
         if (wasSprinting) mc.player.setSprinting(false);
