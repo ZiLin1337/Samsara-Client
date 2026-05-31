@@ -248,7 +248,7 @@ public class MixVelocity extends SubModule {
     private void flushPackets() {
         while (!packetQueue.isEmpty()) {
             try {
-                packetQueue.poll().handle(mc.getConnection());
+                ((Packet<ClientGamePacketListener>) packetQueue.poll()).handle(mc.getConnection());
             } catch (Exception e) {
                 e.printStackTrace();
             }

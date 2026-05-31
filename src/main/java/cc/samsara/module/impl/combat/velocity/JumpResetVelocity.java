@@ -109,7 +109,7 @@ public class JumpResetVelocity extends SubModule {
         Packet<?> packet;
         while ((packet = this.packetQueue.poll()) != null) {
             try {
-                packet.handle(connection);
+                ((Packet<ClientGamePacketListener>) packet).handle(connection);
             } catch (Exception e) {
                 this.packetQueue.clear();
                 break;
