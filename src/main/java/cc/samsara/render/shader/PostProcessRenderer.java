@@ -17,7 +17,7 @@ import org.lwjgl.opengl.GL32C;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
 
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.math.MatrixStack;
 
 public class PostProcessRenderer {
 
