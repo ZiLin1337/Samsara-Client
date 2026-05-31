@@ -114,7 +114,7 @@ public class HypixelLogic implements IAccess {
     public void onTick() {
         if (Samsara.getInstance().getModuleManager().getModule(ScaffoldModule.class).isToggled() ||
                 (Samsara.getInstance().getModuleManager().getModule(cc.samsara.module.impl.combat.AntiFireBallModule.class).isToggled() &&
-                        cc.samsara.module.impl.combat.AntiFireBallModule.target != null)) {
+                        Samsara.getInstance().getModuleManager().getModule(cc.samsara.module.impl.combat.AntiFireBallModule.class).target != null)) {
             return;
         }
 
