@@ -28,7 +28,7 @@ dependencies {
 
     implementation 'org.json:json:20240303'
     implementation 'javazoom:jlayer:1.0.1'
-    implementation 'com.github.Redstone0x00:MediaPlayerInfo:v1.1'
+    implementation 'com.github.Redstonecrafter0:MediaPlayerInfo:v1.1'
 }
 
 java {
