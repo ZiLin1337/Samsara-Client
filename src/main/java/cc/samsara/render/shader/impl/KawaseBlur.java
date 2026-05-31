@@ -4,7 +4,7 @@ import cc.samsara.render.shader.Framebuffer;
 import cc.samsara.render.shader.PostProcessRenderer;
 import cc.samsara.render.shader.Shader;
 import cc.samsara.render.shader.ShaderHelper;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 public class KawaseBlur {
 
@@ -55,13 +55,13 @@ public class KawaseBlur {
         double offset = STRENGTHS[radius - 1][1] / 100.0;
 
         PostProcessRenderer.beginRender();
-        renderToFbo(fbos[0], MinecraftClient.getInstance().getFramebuffer().getColorAttachment(), shaderDown, offset);
+        renderToFbo(fbos[0], Minecraft.getInstance().getFramebuffer().getColorAttachment(), shaderDown, offset);
         for (int i = 0; i < iterations; i++)
             renderToFbo(fbos[i + 1], fbos[i].texture, shaderDown, offset);
         for (int i = iterations; i >= 1; i--)
             renderToFbo(fbos[i - 1], fbos[i].texture, shaderUp, offset);
 
-        MinecraftClient.getInstance().getFramebuffer().beginWrite(true);
+        Minecraft.getInstance().getFramebuffer().beginWrite(true);
         shaderPassthrough.bind();
         ShaderHelper.bindTexture(fbos[0].texture);
         shaderPassthrough.set("uTexture", 0);
