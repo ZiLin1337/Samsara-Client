@@ -29,10 +29,6 @@ public class GlTextureMixin implements GlTextureItf {
     @Shadow
     @Final
     private Int2IntMap fboCache;
-    @Shadow
-    protected int width;
-    @Shadow
-    protected int height;
     @Unique
     private Image image;
 
