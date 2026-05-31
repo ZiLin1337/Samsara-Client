@@ -15,6 +15,7 @@ import static org.lwjgl.opengl.GL30C.GL_FRAMEBUFFER;
 import org.lwjgl.opengl.GL30C;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.blaze3d.platform.Window;
 
 import net.minecraft.client.Minecraft;
 

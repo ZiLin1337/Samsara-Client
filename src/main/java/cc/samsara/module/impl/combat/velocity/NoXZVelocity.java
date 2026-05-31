@@ -228,7 +228,7 @@ public class NoXZVelocity extends SubModule {
         if (shouldJump) {
             shouldJump = false;
             if (mc.player.onGround() && mc.player.isSprinting()
-                    && !mc.player.hasEffect(MobEffects.JUMP) && !shouldIgnore()) {
+                    && !mc.player.hasEffect(MobEffects.JUMP_BOOST) && !shouldIgnore()) {
                 // Simplified sprinting - in Minecraft 1.21.10 the API may have changed
             }
         }
@@ -329,7 +329,6 @@ public class NoXZVelocity extends SubModule {
                 || packet instanceof net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket
                 || packet instanceof net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket
                 || packet instanceof net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket
-                || packet instanceof net.minecraft.network.protocol.game.ClientboundDisconnectPacket
                 || packet instanceof net.minecraft.network.protocol.game.ClientboundAnimatePacket;
     }
 

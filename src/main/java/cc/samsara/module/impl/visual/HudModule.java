@@ -135,7 +135,7 @@ public class HudModule extends Module {
                         Color.white);
                 break;
             case "Samsara":
-                String info = "Samsara " + ChatFormatting.WHITE + Samsara.VERSION + " - " + (mc.isLocalServer() ? "none" : censorIfLiquidProxy(mc.getCurrentServer().ip)) + " - FPS " + mc.getFps() + " - " + Flags.user.getName();
+                String info = "Samsara " + ChatFormatting.WHITE + Samsara.VERSION + " - " + (mc.isLocalServer() ? "none" : censorIfLiquidProxy(mc.getCurrentServer().ip)) + " - FPS " + mc.getFps();
                 float infoWidth = uiFont.getStringWidth(info) + 6;
 
                 SkijaUtil.roundedRectangleGradientOutline(

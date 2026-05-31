@@ -44,7 +44,7 @@ public class WatchdogInventoryMove extends SubModule {
     @EventTarget
     public void onUpdate(UpdateEvent e) {
         KillauraModule killauraModule = Samsara.getInstance().getModuleManager().getModule(KillauraModule.class);
-        if (mc.player == null || mc.player.isUsingItem() || mc.player.isBlocking() || !killauraModule.validTargets.isEmpty()) return;
+        if (mc.player == null || mc.player.isUsingItem() || mc.player.isBlocking()) return;
         Screen screen = mc.screen;
         if (screen == null || !parentClass.ScreenCheck()) return;
         KeyMapping.setAll();
@@ -54,7 +54,7 @@ public class WatchdogInventoryMove extends SubModule {
     @EventTarget
     public void onPacket(PacketEvent e) {
         KillauraModule killauraModule = Samsara.getInstance().getModuleManager().getModule(KillauraModule.class);
-        if (mc.player == null || mc.level == null || mc.player.isUsingItem() || mc.player.isBlocking() || !killauraModule.validTargets.isEmpty()) return;
+        if (mc.player == null || mc.level == null || mc.player.isUsingItem() || mc.player.isBlocking()) return;
 
         if (e.getPacket() instanceof ServerboundContainerClickPacket packet) {
             if (packet.containerId() == mc.player.inventoryMenu.containerId && contains(allowedActions, packet.clickType())) {

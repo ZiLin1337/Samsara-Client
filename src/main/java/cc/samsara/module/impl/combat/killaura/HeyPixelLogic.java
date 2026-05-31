@@ -200,9 +200,9 @@ public class HeyPixelLogic implements IAccess {
         hpCurrentYaw = mc.player.getYRot();
         hpCurrentPitch = mc.player.getXRot();
 
-        if (RotationComponent.targetRotation != null) {
-            mc.player.setYRot(RotationComponent.targetRotation[0]);
-            mc.player.setXRot(RotationComponent.targetRotation[1]);
+        if (RotationComponent.targetRotations != null) {
+            mc.player.setYRot(RotationComponent.targetRotations[0]);
+            mc.player.setXRot(RotationComponent.targetRotations[1]);
         }
 
         if (props.getHpMultiAttack()) {
