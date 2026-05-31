@@ -1,0 +1,6 @@
+package cc.samsara.event.events.impl.game;
+
+import cc.samsara.event.events.callables.EventCancellable;
+
+public class AlternativeMoveEvent extends EventCancellable {
+}
