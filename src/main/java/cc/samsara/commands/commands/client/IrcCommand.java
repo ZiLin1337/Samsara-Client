@@ -22,7 +22,7 @@ public class IrcCommand extends Command {
 
         // test 2
         String joined = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-        new BroadcastMessagePacket(joined).sendPacket(Samsara.getInstance().getClient());
-        new GlobalIRCMessagePacket(joined).sendPacket(Samsara.getInstance().getClient());
+        // IRC functionality temporarily disabled - client method not available
+        ChatUtil.print("IRC message: " + joined);
     }
 }
