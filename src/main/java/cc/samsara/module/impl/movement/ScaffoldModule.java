@@ -789,7 +789,7 @@ public class ScaffoldModule extends Module {
             return;
         }
 
-        final boolean isGodBridgeMode = rotationMode.getValue() == RotationMode.GOD_BRIDGE && rotation.getProperty();
+        final boolean isGodBridgeMode = rotationMode.getProperty().equals("God Bridge") && rotation.getProperty();
         final boolean shouldSkipDiagonal = MoveUtil.isGoingDiagonally() && dontJumpOnDiag.getProperty();
 
         boolean shouldJump;
@@ -838,7 +838,7 @@ public class ScaffoldModule extends Module {
     }
 
     private boolean isRayCastSafe() {
-        boolean spoof = rotationMode.getValue() == RotationMode.MODERN_WATCHDOG && spoofRayCast.getProperty();
+        boolean spoof = rotationMode.getProperty().equals("Modern Watchdog") && spoofRayCast.getProperty();
 
         float yaw = spoof ?
                 mc.player.getYRot() - 180 : RotationComponent.getYaw(), pitch = RotationComponent.getPitch();

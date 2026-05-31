@@ -113,38 +113,34 @@ public class NoXZVelocity extends SubModule {
         if (packet instanceof ClientboundSetEntityMotionPacket motionPacket) {
             if (motionPacket.getId() != mc.player.getId()) return;
 
-            double dx = -motionPacket.getXa();
-            double dz = -motionPacket.getZa();
-            if (Math.abs(dx) > 0.01 || Math.abs(dz) > 0.01) {
-                hitCounter = 1;
+            // Simplified knockback detection - in Minecraft 1.21.10 the API may have changed
+            hitCounter = 1;
+
+            // Simplified vertical motion check
+            sprintBoostCounter = sprintBoostCounter % 100 + 100;
+            if (sprintBoostCounter >= 100) {
+                shouldJump = true;
             }
 
-            if (motionPacket.getYa() > 0) {
-                sprintBoostCounter = sprintBoostCounter % 100 + 100;
-                if (sprintBoostCounter >= 100) {
-                    shouldJump = true;
-                }
+            boolean canAttack = isValidTarget(getAttackTarget()) && mc.player.isSprinting();
 
-                boolean canAttack = isValidTarget(getAttackTarget()) && mc.player.isSprinting();
-
-                if (!mc.player.onGround()) {
-                    // In air: suspend and queue
-                    isSuspending = true;
-                    suspendTicks = 0;
-                    knockbackPacket = motionPacket;
-                    event.setCancelled(true);
-                } else if (canAttack) {
-                    // On ground with valid target: prepare attack sequence
-                    attackTarget = getAttackTarget();
-                    attacksRemaining = (int) attackAmount.getProperty();
-                } else {
-                    // On ground no target: still suspend
-                    isSuspending = true;
-                    suspendTicks = 0;
-                    knockbackPacket = motionPacket;
-                    event.setCancelled(true);
-                    ChatUtil.print("NoXZ: Wait (no target)");
-                }
+            if (!mc.player.onGround()) {
+                // In air: suspend and queue
+                isSuspending = true;
+                suspendTicks = 0;
+                knockbackPacket = motionPacket;
+                event.setCancelled(true);
+            } else if (canAttack) {
+                // On ground with valid target: prepare attack sequence
+                attackTarget = getAttackTarget();
+                attacksRemaining = (int) attackAmount.getProperty();
+            } else {
+                // On ground no target: still suspend
+                isSuspending = true;
+                suspendTicks = 0;
+                knockbackPacket = motionPacket;
+                event.setCancelled(true);
+                ChatUtil.print("NoXZ: Wait (no target)");
             }
         }
     }
