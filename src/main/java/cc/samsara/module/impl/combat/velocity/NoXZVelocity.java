@@ -133,7 +133,7 @@ public class NoXZVelocity extends SubModule {
             } else if (canAttack) {
                 // On ground with valid target: prepare attack sequence
                 attackTarget = getAttackTarget();
-                attacksRemaining = (int) attackAmount.getProperty();
+                attacksRemaining = (int) attackAmount.getProperty().floatValue();
             } else {
                 // On ground no target: still suspend
                 isSuspending = true;
@@ -191,7 +191,7 @@ public class NoXZVelocity extends SubModule {
                 if (onGround && canAttack && sprinting) {
                     isFlushing = true;
                     attackTarget = target;
-                    attacksRemaining = (int) attackAmount.getProperty();
+                    attacksRemaining = (int) attackAmount.getProperty().floatValue();
                     sendMovePackets();
                     applyKnockbackPacket();
 

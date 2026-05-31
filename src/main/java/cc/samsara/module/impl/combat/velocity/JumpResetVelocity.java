@@ -124,7 +124,7 @@ public class JumpResetVelocity extends SubModule {
         var player = mc.player;
         if (player == null) return;
 
-        Packet<ClientGamePacketListener> packet = event.getPacket();
+        Packet<?> packet = event.getPacket();
 
         // If we are suspending, queue most non-critical packets
         if (this.isSuspending
@@ -238,7 +238,7 @@ public class JumpResetVelocity extends SubModule {
             this.rotationHeldTicks++;
         }
         boolean shouldClear = player.hurtTime == 0
-                || this.rotationHeldTicks > (int) rotationRange.getProperty()
+                || this.rotationHeldTicks > (int) rotationRange.getProperty().floatValue()
                 || (!rotate.getProperty() && !followDirection.getProperty());
         if (shouldClear) {
             this.targetRotation = null;

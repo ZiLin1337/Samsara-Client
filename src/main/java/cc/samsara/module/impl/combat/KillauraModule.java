@@ -89,13 +89,13 @@ public class KillauraModule extends Module {
     public final BooleanProperty hpInfSwitch = new BooleanProperty("Infinite Switch", false).setVisible(() -> mode.is("HeyPixel"));
     public final BooleanProperty hpPreferBaby = new BooleanProperty("Prefer Baby", false).setVisible(() -> mode.is("HeyPixel"));
     public final BooleanProperty hpKeepSprint = new BooleanProperty("Keep Sprint", true).setVisible(() -> mode.is("HeyPixel"));
-    public final NumberProperty hpAimRange = new NumberProperty("Aim Range", 4.0, 1.0, 6.0, 0.1).setVisible(() -> mode.is("HeyPixel"));
-    public final NumberProperty hpMaxAPS = new NumberProperty("Max APS", 12.0, 1.0, 20.0, 1.0).setVisible(() -> mode.is("HeyPixel"));
-    public final NumberProperty hpMinAPS = new NumberProperty("Min APS", 9.0, 1.0, 20.0, 1.0).setVisible(() -> mode.is("HeyPixel"));
-    public final NumberProperty hpSwitchSize = new NumberProperty("Switch Size", 1.0, 1.0, 5.0, 1.0).setVisible(() -> mode.is("HeyPixel") && !hpInfSwitch.getProperty());
-    public final NumberProperty hpSwitchDelay = new NumberProperty("Switch Delay (Ticks)", 1.0, 1.0, 10.0, 1.0).setVisible(() -> mode.is("HeyPixel"));
-    public final NumberProperty hpFoV = new NumberProperty("Field of View", 360.0, 10.0, 360.0, 1.0).setVisible(() -> mode.is("HeyPixel"));
-    public final NumberProperty hpHurtTime = new NumberProperty("Hurt Time", 10.0, 0.0, 10.0, 1.0).setVisible(() -> mode.is("HeyPixel"));
+    public final NumberProperty hpAimRange = new NumberProperty("Aim Range", 4.0f, 1.0f, 6.0f, 0.1f).setVisible(() -> mode.is("HeyPixel"));
+    public final NumberProperty hpMaxAPS = new NumberProperty("Max APS", 12.0f, 1.0f, 20.0f, 1.0f).setVisible(() -> mode.is("HeyPixel"));
+    public final NumberProperty hpMinAPS = new NumberProperty("Min APS", 9.0f, 1.0f, 20.0f, 1.0f).setVisible(() -> mode.is("HeyPixel"));
+    public final NumberProperty hpSwitchSize = new NumberProperty("Switch Size", 1.0f, 1.0f, 5.0f, 1.0f).setVisible(() -> mode.is("HeyPixel") && !hpInfSwitch.getProperty());
+    public final NumberProperty hpSwitchDelay = new NumberProperty("Switch Delay (Ticks)", 1.0f, 1.0f, 10.0f, 1.0f).setVisible(() -> mode.is("HeyPixel"));
+    public final NumberProperty hpFoV = new NumberProperty("Field of View", 360.0f, 10.0f, 360.0f, 1.0f).setVisible(() -> mode.is("HeyPixel"));
+    public final NumberProperty hpHurtTime = new NumberProperty("Hurt Time", 10.0f, 0.0f, 10.0f, 1.0f).setVisible(() -> mode.is("HeyPixel"));
     public final ModeProperty hpDelayMode = new ModeProperty("Delay Mode", "1.8", "1.9", "1.8").setVisible(() -> mode.is("HeyPixel"));
     public final ModeProperty hpPriorityMode = new ModeProperty("Priority", "Distance", "FoV", "Health").setVisible(() -> mode.is("HeyPixel"));
 
@@ -190,6 +190,7 @@ public class KillauraModule extends Module {
 
     private HeyPixelLogic.Props buildHeyPixelProps() {
         return new HeyPixelLogic.Props() {
+            public boolean getHpIgnoreSkipTicks() { return false; }
             public boolean getHpAttackPlayer() { return hpAttackPlayer.getProperty(); }
             public boolean getHpAttackInvisible() { return hpAttackInvisible.getProperty(); }
             public boolean getHpAttackAnimals() { return hpAttackAnimals.getProperty(); }

@@ -105,7 +105,7 @@ public class Samsara implements IAccess {
     }
 
     // Placeholder for IRC/network client - cloud configs may need to be reimplemented
-    public Object getClient() {
+    public org.java_websocket.client.WebSocketClient getClient() {
         // Return null - cloud config system may need to be reimplemented for 1.21.10
         return null;
     }

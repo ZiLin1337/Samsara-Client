@@ -164,7 +164,7 @@ public class HeyPixelLogic implements IAccess {
         if (entity instanceof net.minecraft.world.entity.decoration.ArmorStand) return false;
         if (entity.isInvisible() && !props.getHpAttackInvisible()) return false;
         if (entity instanceof Player) {
-            if (props.getIgnoreTeamMates() && TeamUtil.isSameTeam(entity)) return false;
+            if (props.getIgnoreTeamMates() if (props.getIgnoreTeamMates() && TeamUtil.isSameTeam(entity)) return false;if (props.getIgnoreTeamMates() && TeamUtil.isSameTeam(entity)) return false; entity instanceof Player if (props.getIgnoreTeamMates() && TeamUtil.isSameTeam(entity)) return false;if (props.getIgnoreTeamMates() && TeamUtil.isSameTeam(entity)) return false; TeamUtil.isSameTeam((Player) entity)) return false;
             if (!props.getHpAttackPlayer()) return false;
             if (entity.getBbWidth() < 0.5 || living.isSleeping()) return false;
             if (entity.isSpectator()) return false;

@@ -71,7 +71,7 @@ public class MixVelocity extends SubModule {
         var player = mc.player;
         if (player == null) return;
 
-        Packet<ClientGamePacketListener> packet = event.getPacket();
+        Packet<?> packet = event.getPacket();
 
         // Web/liquid check
         if (webHitCount <= 0 || player.isInWater() || player.isUnderWater()) {
