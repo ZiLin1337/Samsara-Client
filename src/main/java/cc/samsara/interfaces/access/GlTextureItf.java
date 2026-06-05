@@ -1,7 +1,9 @@
 package cc.samsara.interfaces.access;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import io.github.humbleui.skija.DirectContext;
+import io.github.humbleui.skija.Image;
 
 public interface GlTextureItf {
-    Object samsara$getOrCreateSkikoImage(Object context, RenderTarget framebuffer, boolean hasAlpha);
+    Image samsara$getOrCreateSkikoImage(DirectContext context, RenderTarget framebuffer, boolean hasAlpha);
 }
