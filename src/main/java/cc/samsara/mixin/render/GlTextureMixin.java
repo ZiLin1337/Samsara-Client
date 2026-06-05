@@ -4,10 +4,6 @@ import cc.samsara.interfaces.access.GlTextureItf;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.opengl.GlTexture;
 import com.mojang.blaze3d.pipeline.RenderTarget;
-import io.github.humbleui.skija.ColorType;
-import io.github.humbleui.skija.DirectContext;
-import io.github.humbleui.skija.Image;
-import io.github.humbleui.skija.SurfaceOrigin;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.IntIterator;
 import org.lwjgl.opengl.GL11;
@@ -30,19 +26,18 @@ public class GlTextureMixin implements GlTextureItf {
     @Final
     private Int2IntMap fboCache;
     @Unique
-    private Image image;
+    private Object image; // Changed from Image to Object
 
     @Override
-    public Image samsara$getOrCreateSkikoImage(DirectContext context, RenderTarget framebuffer, boolean hasAlpha) {
-        // Simplified - Image.makeFromAdoptedGLTexture may not be available in this version
-        // Return null for now - Skija rendering may need to be reimplemented
+    public Object samsara$getOrCreateSkikoImage(Object context, RenderTarget framebuffer, boolean hasAlpha) {
+        // Simplified - skija not available at runtime
         return null;
     }
 
     @Inject(method = "destroyImmediately", at = @At("HEAD"), cancellable = true)
     private void samsara$free(CallbackInfo ci) {
         if (image != null) {
-            image.close();
+            // image.close(); // skija Image not available
             image = null;
             IntIterator var1 = this.fboCache.values().iterator();
 

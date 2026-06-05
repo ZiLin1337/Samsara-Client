@@ -66,40 +66,34 @@ public class ShaderRenderer {
         if (shapes.isEmpty())
             return;
 
-        Paint bloomPaintInstance = bloomPaint.get();
+        // Stub: skija not available at runtime, skip shader rendering
+        // Paint bloomPaintInstance = bloomPaint.get();
 
-        if (bloom) {
-            float radius = s(bloomRadius);
+        // if (bloom) {
+        //     float radius = s(bloomRadius);
+        //     bloomPaintInstance.setImageFilter(ImageFilter.makeBlur(radius, radius, FilterTileMode.DECAL));
+        //     bloomPaintInstance.setColor(java.awt.Color.BLACK.getRGB());
+        //     for (ShaderShape shape : shapes) {
+        //         canvas.drawPath(shape.path, bloomPaintInstance);
+        //     }
+        //     bloomPaintInstance.setImageFilter(null);
+        // }
 
-            bloomPaintInstance.setImageFilter(ImageFilter.makeBlur(radius, radius, FilterTileMode.DECAL));
-            bloomPaintInstance.setColor(java.awt.Color.BLACK.getRGB());
-
-            for (ShaderShape shape : shapes) {
-                canvas.drawPath(shape.path, bloomPaintInstance);
-            }
-
-            bloomPaintInstance.setImageFilter(null);
-        }
-
-        if (blur) {
-            float radius = s(blurRadius);
-
-            blurPaint.setImageFilter(ImageFilter.makeBlur(radius, radius, FilterTileMode.CLAMP));
-
-            Image fb = Samsara.getInstance().getSkija().framebufferImage();
-
-            for (ShaderShape shape : shapes) {
-                canvas.save();
-                canvas.clipPath(shape.path, ClipMode.INTERSECT, true);
-                canvas.drawImageRect(fb,
-                        Rect.makeXYWH(0, 0, s(fb.getWidth()), s(fb.getHeight())),
-                        blurPaint
-                );
-                canvas.restore();
-            }
-
-            blurPaint.setImageFilter(null);
-        }
+        // if (blur) {
+        //     float radius = s(blurRadius);
+        //     blurPaint.setImageFilter(ImageFilter.makeBlur(radius, radius, FilterTileMode.CLAMP));
+        //     Image fb = Samsara.getInstance().getSkija().framebufferImage();
+        //     for (ShaderShape shape : shapes) {
+        //         canvas.save();
+        //         canvas.clipPath(shape.path, ClipMode.INTERSECT, true);
+        //         canvas.drawImageRect(fb,
+        //                 Rect.makeXYWH(0, 0, s(fb.getWidth()), s(fb.getHeight())),
+        //                 blurPaint
+        //         );
+        //         canvas.restore();
+        //     }
+        //     blurPaint.setImageFilter(null);
+        // }
 
         shapes.forEach(shape -> shape.path.close());
         shapes.clear();
